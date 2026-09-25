@@ -1,0 +1,75 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+# A pull request's only interesting run is the one for its newest commit; the
+# superseded ones spend runners answering a question nobody is asking. Pushes to
+# main are never cancelled: the per-commit record of which commit was green is
+# what makes a bisect possible.
+concurrency:
+  group: ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+# Third-party actions are pinned to a commit, not a tag: a tag can be moved to
+# point at different code after review, which is the shape every recent Actions
+# supply-chain compromise has taken. Dependabot keeps the trailing comments and
+# the pins in step.
+jobs:
+  go:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version-file: go.mod
+          cache: true
+
+      - name: Build
+        run: go build ./...
+
+      - name: Test
+        run: go test -race -count=1 ./...
+
+      # An untidy module means go.sum and go.mod describe a dependency set that
+      # nothing here tested.
+      - name: Module is tidy
+        run: go mod tidy -diff
+
+      # Reachability-filtered, which is the whole reason it can be a gate rather
+      # than a wall: it fires when a path in this code reaches the vulnerable
+      # symbol, not when a vulnerable version appears somewhere in the graph.
+      # The advisory database is fetched at run time, so pinning the scanner
+      # costs no freshness: a red build here can arrive without a code change,
+      # and that is the signal, not a defect.
+      - name: govulncheck
+        run: go run golang.org/x/vuln/cmd/govulncheck@v1.7.0 ./...
+
+      # No separate `go vet` step: govet is enabled in .golangci.yml, so a vet
+      # step could only ever produce a failure `make lint` does not reproduce.
+      - uses: golangci/golangci-lint-action@ba0d7d2ec06a0ea1cb5fa41b2e4a3ab91d21278a # v9.3.0
+        with:
+          version: v2.5.0
+          args: --config ./.golangci.yml ./...
+
+      # The hooks are the local half of the gate. A hook that lost its execute
+      # bit is skipped by git without a word, so the mode is asserted here.
+      - name: Hooks are executable
+        run: |
+          # Asserted, not assumed: an empty or renamed .githooks/ would make the
+          # mode check below pass by having nothing to look at.
+          tracked=$(git ls-files -s .githooks/)
+          test -n "$tracked" || { echo ".githooks/ tracks no files" >&2; exit 1; }
+          bad=$(echo "$tracked" | grep -v '^100755 ' || true)
+          if [ -n "$bad" ]; then
+            echo "Not mode 755 in the index:" >&2
+            echo "$bad" >&2
+            exit 1
+          fi

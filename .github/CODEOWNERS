@@ -1,0 +1,14 @@
+# Auto-requests review; it gates nothing until "Require review from Code Owners"
+# is enabled on the main ruleset.
+*                         @gurre
+
+# The paths that decide what runs in CI, what the local gate checks, which
+# dependencies enter the build, and who reviews all of that. Listed explicitly
+# so a narrower `*` owner added later cannot approve changes to them.
+/.github/CODEOWNERS       @gurre
+/.github/workflows/       @gurre
+/.github/dependabot.yml   @gurre
+/.githooks/               @gurre
+/go.mod                   @gurre
+/go.sum                   @gurre
+/SECURITY.md              @gurre

@@ -1,0 +1,40 @@
+version: "2"
+
+run:
+  timeout: 5m
+
+issues:
+  # Report every finding, not a sample of each kind.
+  #
+  # The defaults are max-same-issues: 3 and max-issues-per-linter: 50, which
+  # silently truncate. A gate that shows three of twenty-five findings tells you
+  # that fixing those three will make it pass. It does not: fixing them reveals
+  # the next three, the list appears to move on its own, and that reads as
+  # flakiness and teaches people to pass --no-verify.
+  max-same-issues: 0
+  max-issues-per-linter: 0
+
+linters:
+  enable:
+    - errcheck
+    - govet
+    - ineffassign
+    - staticcheck
+    - unused
+
+  exclusions:
+    # tmp/ holds scratch programs that are never committed; linting them turns
+    # a throwaway probe into a build failure.
+    paths:
+      - tmp
+      - vendor
+
+formatters:
+  enable:
+    - gofmt
+    - goimports
+
+  exclusions:
+    paths:
+      - tmp
+      - vendor

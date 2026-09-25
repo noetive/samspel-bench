@@ -1,0 +1,29 @@
+{
+  "models": ["claude-haiku-4-5-20251001", "claude-sonnet-5", "claude-opus-5-5"],
+  "seed": 20260925,
+  "families": [
+    {"name": "F1", "instances": 100, "params": {"suspects": 5, "clues_per_agent": 4}},
+    {"name": "F5", "instances": 100, "n": 5, "params": {"requirements": 40, "cap_tokens": 400, "pass": 0.9}},
+    {"name": "F8", "instances": 100, "params": {"transfers": 8}}
+  ],
+  "conditions": [
+    {"name": "core", "budget_tokens": 8000},
+    {"name": "budget-2k", "budget_tokens": 2000},
+    {"name": "star", "topology": "star", "budget_tokens": 8000},
+    {"name": "decide-all", "decision": "all", "budget_tokens": 8000},
+    {"name": "channel-dup", "budget_tokens": 8000, "channel": {"duplicate": 0.05, "drop": 0.05, "max_delay_ms": 2000}},
+    {"name": "lost-reply", "budget_tokens": 8000, "channel": {"lost_reply": 0.2}},
+    {"name": "byz-wrong-1", "budget_tokens": 8000, "byzantine": {"count": 1, "script": "confident_wrong"}},
+    {"name": "byz-wrong-1-aware", "budget_tokens": 8000, "awareness": true, "byzantine": {"count": 1, "script": "confident_wrong"}},
+    {"name": "byz-inject-1", "budget_tokens": 8000, "byzantine": {"count": 1, "script": "injector"}},
+    {"name": "byz-equivocate-1", "budget_tokens": 8000, "byzantine": {"count": 1, "script": "equivocator"}}
+  ],
+  "controls": ["team", "nocomm", "oracle", "broadcast_all", "ablation"],
+  "repeats": 3,
+  "parallel": 128,
+  "agent": {"max_turns": 30, "max_tokens": 1024, "wait_timeout_sec": 20, "run_timeout_sec": 900},
+  "limits": {"max_inflight": 64, "rpm": 2000, "itpm": 1000000, "otpm": 200000},
+  "model_limits": {
+    "claude-opus-5-5": {"max_inflight": 32, "rpm": 1000, "itpm": 500000, "otpm": 100000}
+  }
+}

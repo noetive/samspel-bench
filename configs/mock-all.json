@@ -1,0 +1,23 @@
+{
+  "models": ["mock"],
+  "seed": 7,
+  "families": [
+    {"name": "F1", "instances": 30},
+    {"name": "F5", "instances": 20, "n": 4, "params": {"requirements": 30, "cap_tokens": 200}},
+    {"name": "F8", "instances": 20, "params": {"transfers": 8}}
+  ],
+  "conditions": [
+    {"name": "core"},
+    {"name": "star", "topology": "star"},
+    {"name": "decide-all", "decision": "all"},
+    {"name": "channel-faults", "channel": {"duplicate": 0.2, "drop": 0.05, "max_delay_ms": 50}},
+    {"name": "lost-reply", "channel": {"lost_reply": 0.3}},
+    {"name": "byz-wrong-1", "byzantine": {"count": 1, "script": "confident_wrong"}},
+    {"name": "byz-inject-1", "byzantine": {"count": 1, "script": "injector"}},
+    {"name": "byz-silent-1", "byzantine": {"count": 1, "script": "silent"}},
+    {"name": "byz-sycophant-1", "byzantine": {"count": 1, "script": "sycophant"}}
+  ],
+  "controls": ["team", "nocomm", "oracle", "broadcast_all", "ablation"],
+  "parallel": 64,
+  "agent": {"max_turns": 25, "wait_timeout_sec": 2, "run_timeout_sec": 60}
+}

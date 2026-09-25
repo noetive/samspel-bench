@@ -1,0 +1,15 @@
+{
+  "models": ["claude-haiku-4-5-20251001"],
+  "seed": 1,
+  "families": [
+    {"name": "F1", "instances": 3, "params": {"suspects": 5, "clues_per_agent": 4}},
+    {"name": "F5", "instances": 2, "n": 3, "params": {"requirements": 12, "cap_tokens": 200}},
+    {"name": "F8", "instances": 2, "params": {"transfers": 6}}
+  ],
+  "conditions": [{"name": "core", "budget_tokens": 8000}],
+  "controls": ["team", "nocomm", "oracle"],
+  "repeats": 1,
+  "parallel": 8,
+  "agent": {"max_turns": 20, "max_tokens": 1024, "wait_timeout_sec": 15, "run_timeout_sec": 300},
+  "limits": {"max_inflight": 16, "rpm": 50, "itpm": 50000, "otpm": 10000}
+}

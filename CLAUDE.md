@@ -25,8 +25,9 @@ make build test lint
 filter (credentials, size, binaries, formatting); pre-push runs race tests and lint. CI
 runs build, race tests, `go mod tidy -diff`, govulncheck and golangci-lint on every push.
 
-There are no dependencies yet. Vendor with the first one, so a build needs no network and
-mutation testing can build mutants in an isolated copy of the module.
+Dependencies are vendored under `vendor/`, so a build needs no network and mutation
+testing can build mutants in an isolated copy of the module. Run `go mod vendor` after
+any change to `go.mod`.
 
 ## JSON
 

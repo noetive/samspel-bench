@@ -189,9 +189,10 @@ $RECYCLE.BIN/
 # Scratch programs and throwaway probes. Nothing in it is committed.
 /tmp/
 
-# Benchmark run output: results and transcripts. Regenerable by re-running,
+# Benchmark run output: results, reports and traces. Regenerable by re-running,
 # large, and specific to one machine's models.
 /runs/
+/results/
 
 # Allocation baselines stay local: the numbers are not a published surface and
 # this repository is public. `make bench` reproduces them on demand.

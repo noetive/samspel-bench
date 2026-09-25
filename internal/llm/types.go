@@ -29,6 +29,21 @@ type Block struct {
 	Content      string          `json:"content,omitempty"`
 	IsError      bool            `json:"is_error,omitempty"`
 	CacheControl *CacheControl   `json:"cache_control,omitempty"`
+	// Raw is the block exactly as the API returned it. A block from a response
+	// is re-sent byte for byte, because thinking blocks carry a signature the
+	// API checks and fields this harness does not model; see MarshalJSON.
+	Raw json.RawMessage `json:"-"`
+}
+
+// MarshalJSON re-sends a response block as it arrived. A cache breakpoint is
+// the one change the harness makes to a past block, and only text and
+// tool_use blocks, which it models fully, ever carry one.
+func (b Block) MarshalJSON() ([]byte, error) {
+	if len(b.Raw) > 0 && b.CacheControl == nil {
+		return b.Raw, nil
+	}
+	type block Block
+	return json.Marshal(block(b))
 }
 
 // Text returns a text block.

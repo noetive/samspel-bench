@@ -2,6 +2,7 @@ package llm
 
 import (
 	"context"
+	"errors"
 	"net/http"
 	"net/http/httptest"
 	"sync/atomic"
@@ -9,6 +10,7 @@ import (
 	"time"
 
 	"github.com/goccy/go-json"
+	"github.com/tidwall/gjson"
 )
 
 // A fake Messages API: first call is throttled with retry-after, then it
@@ -127,6 +129,68 @@ func TestClientSendsWorkspaceOnlyWhenSet(t *testing.T) {
 		}
 		if ws != "" && (len(vals) != 1 || vals[0] != ws) {
 			t.Errorf("header = %v, want [%s]", vals, ws)
+		}
+	}
+}
+
+// Models that think return thinking blocks the API expects back unchanged on
+// the next turn, signature and all; a block missing a field is a 400 that
+// fails the whole run.
+func TestResponseBlocksReplayUnchanged(t *testing.T) {
+	thinking := `{"type":"thinking","thinking":"","signature":"c2lnbmF0dXJl"}`
+	redacted := `{"type":"redacted_thinking","data":"b3BhcXVl"}`
+	body := []byte(`{"content":[` + thinking + `,` + redacted + `,{"type":"tool_use","id":"t1","name":"send","input":{"to":"agent-2","text":"hi"}}],"stop_reason":"tool_use","usage":{}}`)
+	resp, err := decodeResponse(body)
+	if err != nil {
+		t.Fatal(err)
+	}
+	msgs := []Message{
+		{Role: "user", Content: []Block{Text("go")}},
+		{Role: "assistant", Content: resp.Content},
+		{Role: "user", Content: []Block{ToolResult("t1", "sent", false)}},
+	}
+	b, err := json.Marshal(buildRequest(Request{Model: "m", Messages: msgs, MaxTokens: 10}))
+	if err != nil {
+		t.Fatal(err)
+	}
+	sent := gjson.GetBytes(b, "messages.1.content")
+	if got := sent.Get("0").Raw; got != thinking {
+		t.Errorf("thinking block re-sent as %s, want %s", got, thinking)
+	}
+	if got := sent.Get("1").Raw; got != redacted {
+		t.Errorf("redacted block re-sent as %s, want %s", got, redacted)
+	}
+	if got := sent.Get("2.input.text").String(); got != "hi" {
+		t.Errorf("tool_use input lost: %s", sent.Get("2").Raw)
+	}
+	if !gjson.GetBytes(b, "messages.2.content.0.cache_control").Exists() {
+		t.Error("the cache breakpoint on the last block is gone")
+	}
+}
+
+// A run cut off while its request was retrying a server or network failure
+// must be marked transient, so it is rerun instead of scored as the agents
+// running out of time; a request the API refuses outright must not be, or a
+// bad request would be retried and paid for again.
+func TestCompleteMarksOnlyRetryableFailuresTransient(t *testing.T) {
+	for _, tc := range []struct {
+		status    int
+		transient bool
+	}{{503, true}, {529, true}, {429, true}, {400, false}} {
+		srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.WriteHeader(tc.status)
+			_, _ = w.Write([]byte(`{"type":"error","error":{"type":"x","message":"no"}}`))
+		}))
+		c := NewClient("k", srv.URL, NewLimiterSet(Limits{MaxInflight: 1, RPM: 6000, ITPM: 1e6, OTPM: 1e6}, nil), 1)
+		ctx, cancel := context.WithTimeout(context.Background(), 300*time.Millisecond)
+		_, err := c.Complete(ctx, Request{Model: "m", Messages: []Message{{Role: "user", Content: []Block{Text("hi")}}}, MaxTokens: 10})
+		cancel()
+		srv.Close()
+		if err == nil {
+			t.Fatalf("status %d: no error", tc.status)
+		}
+		if got := errors.Is(err, ErrTransient); got != tc.transient {
+			t.Errorf("status %d: transient = %v, want %v (%v)", tc.status, got, tc.transient, err)
 		}
 	}
 }

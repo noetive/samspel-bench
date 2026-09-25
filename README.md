@@ -6,6 +6,8 @@ Measure how well your agents work together, not only how well each one works alo
 
 samspel-bench is a benchmark for agent-to-agent collaboration. *Samspel* is Swedish for interplay.
 
+Results: [noetive.github.io/samspel-bench](https://noetive.github.io/samspel-bench/). The page in `docs/` reads `docs/report.json`; publish a run by copying its `report.json` there.
+
 ## Status
 
 The harness runs end to end against Anthropic models through the Messages API, or against scripted mock agents with no API key. Three task families are implemented (see [Implemented](#implemented)); the rest of the design is listed under [Not yet implemented](#not-yet-implemented).

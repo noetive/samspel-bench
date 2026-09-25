@@ -44,6 +44,10 @@ type Result struct {
 	SentTokens int                `json:"sent_tokens"`
 	DurationMS int64              `json:"duration_ms"`
 	Error      string             `json:"error,omitempty"`
+	// Transient marks an Error caused only by transient API failures; such a
+	// run is retried and never scored.
+	Transient bool `json:"transient,omitempty"`
+	Attempts  int  `json:"attempts"`
 }
 
 // Options are process-level settings that are not part of the benchmark.
@@ -54,9 +58,13 @@ type Options struct {
 	MockLatency time.Duration
 	Traces      bool
 	MaxJobs     int
-	SpoolDir    string    // when set, each run's messages travel through DIR/<job>.jsonl
-	Model       llm.Model // shared client for real runs
-	Log         *slog.Logger
+	SpoolDir    string // when set, each run's messages travel through DIR/<job>.jsonl
+	// RunRetries reruns a run that failed only through transient API
+	// failures, waiting RetryBackoff, then twice that, and so on.
+	RunRetries   int
+	RetryBackoff time.Duration
+	Model        llm.Model // shared client for real runs
+	Log          *slog.Logger
 }
 
 // Runner executes jobs.
@@ -138,7 +146,7 @@ func (r *Runner) Run(ctx context.Context) (err error) {
 		go func() {
 			defer wg.Done()
 			for j := range jobs {
-				res := r.RunJob(ctx, j)
+				res := r.runWithRetries(ctx, j)
 				if ctx.Err() != nil {
 					return // don't record runs cut short by shutdown
 				}
@@ -376,15 +384,21 @@ func (r *Runner) RunJob(ctx context.Context, j Job) (res Result) {
 	if res.Metrics == nil {
 		res.Metrics = map[string]float64{}
 	}
-	for id, st := range stats {
+	// A lasting error outranks a transient one: retrying cannot fix it.
+	res.Transient = true
+	for _, id := range sortedIDs(stats) {
+		st := stats[id]
 		res.Usage.Add(st.Usage)
 		res.ModelCalls += st.Calls
-		if st.Err != "" && res.Error == "" {
-			res.Error = id + ": " + st.Err
+		if st.Err != "" && (res.Error == "" || (res.Transient && !st.Transient)) {
+			res.Error, res.Transient = id+": "+st.Err, st.Transient
 		}
 	}
+	if res.Error == "" {
+		res.Transient = false
+	}
 	if err := b.Err(); err != nil && res.Error == "" {
-		res.Error = "message transport: " + err.Error()
+		res.Error, res.Transient = "message transport: "+err.Error(), false
 	}
 	if ctx.Err() == nil && rctx.Err() == context.DeadlineExceeded {
 		res.Metrics["timed_out"] = 1
@@ -530,4 +544,35 @@ func sortIDs(ids []string) {
 		}
 		return ids[i] < ids[j]
 	})
+}
+
+// runWithRetries runs a job, rerunning it while it fails only through
+// transient API failures. Each attempt starts the run from scratch, so a
+// flaky connection costs time and tokens but never a scored result.
+func (r *Runner) runWithRetries(ctx context.Context, j Job) Result {
+	res := r.RunJob(ctx, j)
+	res.Attempts = 1
+	wait := r.opts.RetryBackoff
+	for res.Transient && res.Attempts <= r.opts.RunRetries {
+		r.opts.Log.Warn("retrying run after transient API failures", "job", j.ID, "attempt", res.Attempts+1, "wait", wait, "tokens_spent", res.Usage.Total(), "error", res.Error)
+		select {
+		case <-ctx.Done():
+			return res
+		case <-time.After(wait):
+		}
+		attempts := res.Attempts
+		res = r.RunJob(ctx, j)
+		res.Attempts = attempts + 1
+		wait = min(2*wait, 10*time.Minute)
+	}
+	return res
+}
+
+func sortedIDs(stats map[string]agent.Stats) []string {
+	ids := make([]string, 0, len(stats))
+	for id := range stats {
+		ids = append(ids, id)
+	}
+	sortIDs(ids)
+	return ids
 }

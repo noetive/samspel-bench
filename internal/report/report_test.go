@@ -1,11 +1,14 @@
 package report
 
 import (
+	"fmt"
 	"math"
 	"testing"
 
 	"github.com/goccy/go-json"
 	"github.com/tidwall/gjson"
+
+	"github.com/noetive/samspel-bench/internal/runner"
 )
 
 // report.json is the machine-readable scorecard. A row whose gain is undefined
@@ -33,5 +36,28 @@ func TestRowJSON_UndefinedStatisticsEncodeAsNull(t *testing.T) {
 	}
 	if n := len(got.Map()); n != 12 {
 		t.Errorf("row has %d fields, want 12 (no duplicated keys from the override): %s", n, got.Raw)
+	}
+}
+
+// A scorecard is read by people deciding which model collaborates better. A
+// handful of instances that all succeeded must not be shown with an interval
+// of zero width, which reads as certainty; enough instances must get one.
+func TestBuild_IntervalsOnlyWithEnoughInstances(t *testing.T) {
+	results := func(n int) []runner.Result {
+		var rs []runner.Result
+		for i := 0; i < n; i++ {
+			for _, c := range []string{"team", "nocomm", "oracle"} {
+				rs = append(rs, runner.Result{JobID: fmt.Sprintf("%d-%s", i, c), Model: "m", Family: "F1", Condition: "core", Control: c, Seed: uint64(i), Success: c != "nocomm" || i%2 == 0})
+			}
+		}
+		return rs
+	}
+	few := Build(results(minCIInstances-1), 200)[0]
+	if !math.IsNaN(few.STeamCI[0]) || !math.IsNaN(few.GCI[0]) {
+		t.Errorf("%d instances got intervals %v %v", minCIInstances-1, few.STeamCI, few.GCI)
+	}
+	enough := Build(results(minCIInstances+10), 200)[0]
+	if math.IsNaN(enough.STeamCI[0]) || math.IsNaN(enough.GCI[0]) {
+		t.Errorf("%d instances got no interval", minCIInstances+10)
 	}
 }

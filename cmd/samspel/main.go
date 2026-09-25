@@ -23,6 +23,7 @@ import (
 	"os"
 	"os/signal"
 	"path/filepath"
+	"strings"
 	"syscall"
 	"time"
 
@@ -41,8 +42,8 @@ var version = "dev"
 const usage = `usage: samspel <subcommand> [flags]
 
 subcommands:
-  run       -config FILE -out DIR [-parallel N] [-mock] [-traces] [-max-jobs N] [-spool DIR] [-dry-run]
-  report    -in DIR
+  run       -config FILE -out DIR [-parallel N] [-mock] [-traces] [-max-jobs N] [-spool DIR] [-report DIR] [-run-retries N] [-retry-backoff D] [-dry-run]
+  report    -in DIR[,DIR...] [-out DIR]
   list      print task families, controls and adversary scripts
   version   print the build version
 `
@@ -112,6 +113,9 @@ func cmdRun(args []string, stdout, stderr io.Writer) error {
 	traces := fs.Bool("traces", false, "write one JSONL trace per run")
 	maxJobs := fs.Int("max-jobs", 0, "run at most N pending jobs (smoke testing)")
 	spool := fs.String("spool", "", "carry each run's messages through a JSONL file in this directory instead of memory")
+	reportDir := fs.String("report", "", "directory for report.md and report.json (default: -out), e.g. docs for the published page")
+	runRetries := fs.Int("run-retries", 3, "rerun a run that failed only through transient API failures up to N times")
+	retryBackoff := fs.Duration("retry-backoff", 30*time.Second, "wait before the first rerun; doubles each time")
 	dry := fs.Bool("dry-run", false, "print the job count and exit")
 	if err := parseFlags(fs, args, stderr); err != nil {
 		return err
@@ -131,7 +135,7 @@ func cmdRun(args []string, stdout, stderr io.Writer) error {
 		return err
 	}
 
-	opts := runner.Options{Out: *out, Parallel: cfg.Parallel, Mock: *mock, MockLatency: *mockLatency, Traces: *traces, MaxJobs: *maxJobs, SpoolDir: *spool, Log: slog.New(slog.NewTextHandler(stderr, nil))}
+	opts := runner.Options{Out: *out, Parallel: cfg.Parallel, Mock: *mock, MockLatency: *mockLatency, Traces: *traces, MaxJobs: *maxJobs, SpoolDir: *spool, RunRetries: *runRetries, RetryBackoff: *retryBackoff, Log: slog.New(slog.NewTextHandler(stderr, nil))}
 	var client *llm.Client
 	if !*mock {
 		key := os.Getenv("ANTHROPIC_API_KEY")
@@ -163,7 +167,13 @@ func cmdRun(args []string, stdout, stderr io.Writer) error {
 		_, _ = fmt.Fprintf(stderr, "samspel: API requests=%d throttled(429)=%d overloaded(529)=%d server/network errors=%d failed=%d\n",
 			client.Requests.Load(), client.Throttled.Load(), client.Overloaded.Load(), client.ServerErrs.Load(), client.Failed.Load())
 	}
-	if err := writeReport(*out, stdout); err != nil {
+	if *reportDir == "" {
+		*reportDir = *out
+	}
+	if err := os.MkdirAll(*reportDir, 0o755); err != nil {
+		return err
+	}
+	if err := writeReport([]string{*out}, *reportDir, stdout); err != nil {
 		return err
 	}
 	if errors.Is(runErr, context.Canceled) {
@@ -173,10 +183,14 @@ func cmdRun(args []string, stdout, stderr io.Writer) error {
 	return runErr
 }
 
-// writeReport rebuilds report.md and report.json in dir from its
-// results.jsonl and prints the markdown scorecard.
-func writeReport(dir string, stdout io.Writer) error {
-	res, err := report.Load(filepath.Join(dir, "results.jsonl"))
+// writeReport builds report.md and report.json in out from the results.jsonl
+// of every directory in ins and prints the markdown scorecard.
+func writeReport(ins []string, dir string, stdout io.Writer) error {
+	paths := make([]string, len(ins))
+	for i, in := range ins {
+		paths[i] = filepath.Join(in, "results.jsonl")
+	}
+	res, err := report.Load(paths...)
 	if err != nil {
 		return err
 	}
@@ -198,11 +212,19 @@ func writeReport(dir string, stdout io.Writer) error {
 
 func cmdReport(args []string, stdout, stderr io.Writer) error {
 	fs := flag.NewFlagSet("report", flag.ContinueOnError)
-	in := fs.String("in", "results/run", "directory with results.jsonl")
+	in := fs.String("in", "results/run", "directory with results.jsonl; several, comma-separated, are combined and a later one wins for the same run")
+	out := fs.String("out", "", "directory for report.md and report.json (default: the first -in)")
 	if err := parseFlags(fs, args, stderr); err != nil {
 		return err
 	}
-	return writeReport(*in, stdout)
+	ins := strings.Split(*in, ",")
+	if *out == "" {
+		*out = ins[0]
+	}
+	if err := os.MkdirAll(*out, 0o755); err != nil {
+		return err
+	}
+	return writeReport(ins, *out, stdout)
 }
 
 func cmdList(stdout io.Writer) error {

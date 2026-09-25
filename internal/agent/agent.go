@@ -4,6 +4,7 @@ package agent
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"strings"
 	"time"
@@ -37,6 +38,8 @@ type Stats struct {
 	Usage llm.Usage
 	Calls int
 	Err   string
+	// Transient reports that Err came from transient API failures only.
+	Transient bool
 }
 
 // QuietNotice is the wait result when every agent is idle.
@@ -88,8 +91,10 @@ func Run(ctx context.Context, c Config, b *bus.Bus, env task.Env, tr *trace.Trac
 		}
 		resp, err := c.Model.Complete(ctx, llm.Request{Model: c.ModelName, System: c.System, Messages: msgs, Tools: tools, MaxTokens: c.MaxTokens, Temperature: c.Temperature})
 		if err != nil {
-			if ctx.Err() == nil {
-				st.Err = err.Error()
+			// A deadline that cut off retries of a transient failure is still
+			// that failure; other context ends are the run finishing.
+			if ctx.Err() == nil || errors.Is(err, llm.ErrTransient) {
+				st.Err, st.Transient = err.Error(), errors.Is(err, llm.ErrTransient)
 			}
 			break
 		}

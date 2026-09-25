@@ -6,6 +6,8 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
+
+	"github.com/tidwall/gjson"
 )
 
 // A script that shells out to samspel branches on the exit status, so a wrong
@@ -107,5 +109,61 @@ func TestRun_MockRunWritesArtifactsAndResumes(t *testing.T) {
 	}
 	if !bytes.HasPrefix(second, first) {
 		t.Fatal("resume rewrote earlier results")
+	}
+}
+
+// The published page reads report.json from its own directory, so a run must
+// be able to write its scorecard there while results and traces stay out of
+// the published tree.
+func TestRun_ReportGoesWhereAsked(t *testing.T) {
+	out, site := t.TempDir(), filepath.Join(t.TempDir(), "docs")
+	args := []string{"run", "-config", "../../configs/mock-all.json", "-out", out, "-report", site, "-mock", "-mock-latency", "0s", "-max-jobs", "3"}
+	var stdout, stderr bytes.Buffer
+	if status := run(args, &stdout, &stderr); status != 0 {
+		t.Fatalf("status = %d, stderr = %q", status, stderr.String())
+	}
+	for _, name := range []string{"report.json", "report.md"} {
+		if _, err := os.Stat(filepath.Join(site, name)); err != nil {
+			t.Errorf("%s not in the report directory: %v", name, err)
+		}
+		if _, err := os.Stat(filepath.Join(out, name)); err == nil {
+			t.Errorf("%s also written to -out", name)
+		}
+	}
+	if _, err := os.Stat(filepath.Join(site, "results.jsonl")); err == nil {
+		t.Error("results leaked into the report directory")
+	}
+}
+
+// Evals run separately (one per model set, or a rerun of failed jobs) are
+// published as one scorecard, and a rerun of the same job must replace the
+// earlier result rather than count twice.
+func TestReport_CombinesRunsAndLaterWins(t *testing.T) {
+	a, b, site := t.TempDir(), t.TempDir(), t.TempDir()
+	job := func(id, model string, ok bool) string {
+		return `{"job_id":"` + id + `","model":"` + model + `","family":"F1","condition":"core","control":"team","seed":1,"success":` + map[bool]string{true: "true", false: "false"}[ok] + `}` + "\n"
+	}
+	if err := os.WriteFile(filepath.Join(a, "results.jsonl"), []byte(job("j1", "m1", false)+job("j2", "m2", true)), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(b, "results.jsonl"), []byte(job("j1", "m1", true)), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	var stdout, stderr bytes.Buffer
+	if status := run([]string{"report", "-in", a + "," + b, "-out", site}, &stdout, &stderr); status != 0 {
+		t.Fatalf("status = %d, stderr = %q", status, stderr.String())
+	}
+	body, err := os.ReadFile(filepath.Join(site, "report.json"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	rows := gjson.ParseBytes(body).Array()
+	if len(rows) != 2 {
+		t.Fatalf("%d rows, want one per model: %s", len(rows), body)
+	}
+	for _, r := range rows {
+		if r.Get("instances").Int() != 1 || r.Get("success.team").Float() != 1 {
+			t.Errorf("row %s: want one instance, succeeded", r.Raw)
+		}
 	}
 }

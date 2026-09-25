@@ -2,12 +2,16 @@ package runner
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"log/slog"
 	"os"
 	"path/filepath"
+	"sync/atomic"
 	"testing"
 	"time"
 
+	"github.com/noetive/samspel-bench/internal/llm"
 	"github.com/noetive/samspel-bench/internal/task"
 )
 
@@ -115,5 +119,65 @@ func TestMockRunOverSpool(t *testing.T) {
 	}
 	if teams != 8 {
 		t.Fatalf("%d team runs, want 8", teams)
+	}
+}
+
+// failingModel fails every request with a fixed error.
+type failingModel struct {
+	err   error
+	calls atomic.Int32
+}
+
+func (m *failingModel) Complete(context.Context, llm.Request) (*llm.Response, error) {
+	m.calls.Add(1)
+	return nil, m.err
+}
+
+// A flaky network must not decide a benchmark: a run that fails only through
+// transient API failures is rerun, and recorded as an error rather than a
+// score if it never gets through. A run the API refuses outright is not
+// rerun, because every rerun spends tokens for the same refusal.
+func TestRunRetriesOnlyTransientFailures(t *testing.T) {
+	for _, tc := range []struct {
+		name         string
+		err          error
+		wantAttempts int
+	}{
+		{"transient", fmt.Errorf("%w: connection reset", llm.ErrTransient), 3},
+		{"lasting", errors.New("status 400: bad request"), 1},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			dir := t.TempDir()
+			cfg := &Config{
+				Models: []string{"m"}, Seed: 1,
+				Families:   []FamilySpec{{Name: "F1", Instances: 1}},
+				Conditions: []Condition{{Name: "core"}},
+				Controls:   []string{"team"},
+				Agent:      AgentSpec{WaitTimeoutSec: 1, RunTimeoutSec: 5},
+			}
+			cfg.defaults()
+			if err := cfg.validate(); err != nil {
+				t.Fatal(err)
+			}
+			model := &failingModel{err: tc.err}
+			opts := Options{Out: dir, Parallel: 1, Model: model, RunRetries: 2, RetryBackoff: time.Millisecond, Log: slog.New(slog.DiscardHandler)}
+			if err := New(cfg, opts).Run(context.Background()); err != nil {
+				t.Fatal(err)
+			}
+			res := readResults(t, filepath.Join(dir, "results.jsonl"))
+			if len(res) != 1 {
+				t.Fatalf("%d results, want 1", len(res))
+			}
+			got := res[0]
+			if got.Attempts != tc.wantAttempts {
+				t.Errorf("attempts = %d, want %d", got.Attempts, tc.wantAttempts)
+			}
+			if got.Error == "" || got.Success {
+				t.Errorf("a run whose every call failed must be an error, got %+v", got)
+			}
+			if got.Transient != errors.Is(tc.err, llm.ErrTransient) {
+				t.Errorf("transient = %v for %v", got.Transient, tc.err)
+			}
+		})
 	}
 }

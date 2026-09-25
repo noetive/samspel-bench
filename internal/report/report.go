@@ -17,15 +17,29 @@ import (
 	"github.com/noetive/samspel-bench/internal/runner"
 )
 
-// Load reads results, keeping the latest line per job.
-func Load(path string) ([]runner.Result, error) {
-	f, err := os.Open(path)
-	if err != nil {
-		return nil, err
-	}
-	defer func() { _ = f.Close() }() // read-only: a close error cannot lose data
+// Load reads results files in order, keeping the latest line per job across
+// all of them, so a later run of the same job replaces an earlier one.
+func Load(paths ...string) ([]runner.Result, error) {
 	byID := map[string]runner.Result{}
 	var order []string
+	for _, path := range paths {
+		if err := loadInto(path, byID, &order); err != nil {
+			return nil, err
+		}
+	}
+	out := make([]runner.Result, 0, len(order))
+	for _, id := range order {
+		out = append(out, byID[id])
+	}
+	return out, nil
+}
+
+func loadInto(path string, byID map[string]runner.Result, order *[]string) error {
+	f, err := os.Open(path)
+	if err != nil {
+		return err
+	}
+	defer func() { _ = f.Close() }() // read-only: a close error cannot lose data
 	sc := bufio.NewScanner(f)
 	sc.Buffer(make([]byte, 1<<20), 1<<24)
 	for sc.Scan() {
@@ -34,15 +48,11 @@ func Load(path string) ([]runner.Result, error) {
 			continue
 		}
 		if _, ok := byID[r.JobID]; !ok {
-			order = append(order, r.JobID)
+			*order = append(*order, r.JobID)
 		}
 		byID[r.JobID] = r
 	}
-	out := make([]runner.Result, 0, len(order))
-	for _, id := range order {
-		out = append(out, byID[id])
-	}
-	return out, sc.Err()
+	return sc.Err()
 }
 
 // Row is one scorecard line (model x family x condition).
@@ -190,10 +200,15 @@ func gain(g *group, seeds []uint64) float64 {
 	return (t - n) / (o - n)
 }
 
+// minCIInstances is the fewest instances an interval is reported for. Below
+// it, resampling a handful of identical outcomes yields a zero-width interval
+// that reads as certainty.
+const minCIInstances = 10
+
 // bootstrap resamples instances with replacement, keeping controls paired.
 func bootstrap(g *group, seeds []uint64, B int) ([2]float64, [2]float64) {
 	nan := [2]float64{math.NaN(), math.NaN()}
-	if len(seeds) < 2 || B <= 0 {
+	if len(seeds) < minCIInstances || B <= 0 {
 		return nan, nan
 	}
 	r := rand.New(rand.NewPCG(uint64(len(seeds)), 99))

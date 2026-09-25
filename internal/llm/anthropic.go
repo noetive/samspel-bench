@@ -107,6 +107,12 @@ func buildRequest(req Request) apiRequest {
 	return out
 }
 
+// ErrTransient marks a request that failed only through conditions worth
+// retrying later: throttling, overload, server errors or a lost connection,
+// including a run deadline that expired while waiting to retry one of them.
+// A run that ends this way says nothing about the agents.
+var ErrTransient = errors.New("transient API failure")
+
 // Complete sends one request, waiting on the shared limiter and retrying
 // 429, 529, 5xx and network errors with jittered backoff. A 429 pauses every
 // caller of the same model for the server's retry-after.
@@ -132,7 +138,7 @@ func (c *Client) Complete(ctx context.Context, req Request) (*Response, error) {
 		}
 		release(0, 0)
 		if ctx.Err() != nil {
-			return nil, ctx.Err()
+			return nil, interrupted(ctx, lastErr)
 		}
 		lastErr = err
 		wait := backoff(attempt)
@@ -156,12 +162,22 @@ func (c *Client) Complete(ctx context.Context, req Request) (*Response, error) {
 		} else {
 			c.ServerErrs.Add(1)
 		}
-		if err := sleep(ctx, wait); err != nil {
-			return nil, err
+		if sleep(ctx, wait) != nil {
+			return nil, interrupted(ctx, lastErr)
 		}
 	}
 	c.Failed.Add(1)
-	return nil, fmt.Errorf("giving up after %d attempts: %w", c.MaxRetries+1, lastErr)
+	return nil, fmt.Errorf("%w: giving up after %d attempts: %w", ErrTransient, c.MaxRetries+1, lastErr)
+}
+
+// interrupted reports a request cut off by its context. After a transient
+// failure the cut is blamed on that failure, so a network outage that eats a
+// run's time budget is not scored as the agents running out of time.
+func interrupted(ctx context.Context, lastErr error) error {
+	if lastErr == nil {
+		return ctx.Err()
+	}
+	return fmt.Errorf("%w: %w while retrying: %w", ErrTransient, ctx.Err(), lastErr)
 }
 
 func (c *Client) post(ctx context.Context, payload []byte) (*Response, http.Header, error) {
@@ -214,6 +230,7 @@ func decodeResponse(body []byte) (*Response, error) {
 	}
 	for _, b := range r.Get("content").Array() {
 		blk := Block{Type: b.Get("type").String(), Text: b.Get("text").String(), ID: b.Get("id").String(), Name: b.Get("name").String()}
+		blk.Raw = json.RawMessage(b.Raw)
 		if in := b.Get("input"); in.Exists() {
 			blk.Input = json.RawMessage(in.Raw)
 		}

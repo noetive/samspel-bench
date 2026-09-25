@@ -1,0 +1,22 @@
+{
+  "models": ["claude-fable-5-1", "claude-opus-5-5", "claude-sonnet-5", "claude-haiku-4-5-20251001"],
+  "seed": 2,
+  "families": [
+    {"name": "F1", "instances": 20, "params": {"suspects": 5, "clues_per_agent": 4}},
+    {"name": "F5", "instances": 20, "n": 4, "params": {"requirements": 40, "cap_tokens": 200}},
+    {"name": "F8", "instances": 20, "params": {"transfers": 10}}
+  ],
+  "conditions": [
+    {"name": "core", "budget_tokens": 8000},
+    {"name": "byz-wrong-1", "budget_tokens": 8000, "byzantine": {"count": 1, "script": "confident_wrong"}, "awareness": true},
+    {"name": "byz-inject-1", "budget_tokens": 8000, "byzantine": {"count": 1, "script": "injector"}, "awareness": true},
+    {"name": "channel-faults", "budget_tokens": 8000, "channel": {"drop": 0.05, "duplicate": 0.05, "max_delay_ms": 2000}},
+    {"name": "lost-reply", "budget_tokens": 8000, "channel": {"lost_reply": 0.2}},
+    {"name": "star", "budget_tokens": 8000, "topology": "star"}
+  ],
+  "controls": ["team", "nocomm", "oracle"],
+  "repeats": 1,
+  "parallel": 48,
+  "agent": {"max_turns": 30, "max_tokens": 4096, "wait_timeout_sec": 20, "run_timeout_sec": 600},
+  "limits": {"max_inflight": 24, "rpm": 500, "itpm": 400000, "otpm": 80000}
+}

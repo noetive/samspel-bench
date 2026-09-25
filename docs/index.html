@@ -1,0 +1,506 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>samspel-bench results</title>
+<meta name="description" content="How well AI agents work together: team success, collaboration gain and cost per model.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@700;800;900&family=Space+Grotesk:wght@400;500;700&display=swap">
+<style>
+:root{--bg:#FDFBF7;--surface:#FFFFFF;--ink:#18181B;--muted:#6B7280;--grid:#E2E8E4;--sage:#E2E8E4;--blue:#DBEAFE;--teal:#CCFBF1;--purple:#A855F7;--shadow:#18181B;color-scheme:light}
+@media (prefers-color-scheme:dark){:root{--bg:#0F172A;--surface:#1E293B;--ink:#F8FAFC;--muted:#94A3B8;--grid:#334155;--sage:#334155;--blue:#1E3A5F;--teal:#134E4A;--shadow:#000000;color-scheme:dark}}
+*{box-sizing:border-box}
+/* The page is a dashboard: it fills the viewport and never scrolls. Charts
+   redraw to whatever space is left. */
+html,body{height:100%;overflow:hidden}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 14px/1.45 "Space Grotesk",ui-sans-serif,system-ui,sans-serif;
+  display:grid;grid-template-rows:auto auto minmax(0,1fr) auto;gap:10px;padding:14px 20px 10px;height:100dvh}
+body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:radial-gradient(55% 55% at 0% 0%,rgba(254,215,170,.45),transparent),radial-gradient(55% 55% at 100% 100%,rgba(204,251,241,.55),transparent)}
+@media (prefers-color-scheme:dark){body::before{display:none}}
+h1,h2{font-family:Outfit,"Space Grotesk",sans-serif;letter-spacing:-.025em;line-height:1.1;margin:0}
+h1{font-size:clamp(28px,3.6vw,52px);font-weight:900}
+@media (max-height:640px){h1{font-size:clamp(22px,2.6vw,34px)}}
+h2{font-size:22px;font-weight:800;margin-bottom:14px}
+a{color:inherit;text-decoration-thickness:2px;text-underline-offset:3px}
+:focus-visible{outline:3px solid var(--purple);outline-offset:2px}
+.micro{font:500 11px/1.4 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin:0}
+.card{position:relative;background:var(--surface);border:2px solid var(--ink);border-radius:18px;box-shadow:4px 4px 0 var(--shadow)}
+.tab{position:absolute;left:16px;top:-26px;height:26px;padding:3px 12px 0;background:var(--blue);border:2px solid var(--ink);border-bottom:0;border-radius:12px 12px 0 0;font:700 12px/1.5 "Space Grotesk",sans-serif;max-width:calc(100% - 32px);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tab.teal{background:var(--teal)}.tab.sage{background:var(--sage)}
+header{display:flex;align-items:flex-end;justify-content:space-between;gap:12px 16px;flex-wrap:wrap}
+header .sub{margin:2px 0 0;color:var(--muted);font-size:13px}
+.notice{display:inline-block;margin:6px 0 0;background:var(--teal);border:2px solid var(--ink);box-shadow:2px 2px 0 var(--shadow);border-radius:999px;padding:1px 12px;transform:rotate(-1deg);font-size:13px;font-weight:700}
+.notice[hidden],.outcome[hidden]{display:none}
+.outcome{margin:6px 0 0;font:700 clamp(15px,1.4vw,20px)/1.3 Outfit,"Space Grotesk",sans-serif;letter-spacing:-.01em;max-width:1000px}
+nav{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+button{font:700 13px/1 "Space Grotesk",sans-serif;color:var(--ink);background:var(--surface);border:2px solid var(--ink);border-radius:999px;padding:7px 12px;box-shadow:2px 2px 0 var(--shadow);cursor:pointer;transition:transform .1s,box-shadow .1s}
+button:hover{transform:translate(1px,1px);box-shadow:0 0 0 var(--shadow)}
+button[aria-pressed="true"]{background:var(--teal)}
+nav .sep{width:2px;height:24px;background:var(--ink);margin:0 2px;border-radius:2px}
+/* Model strip, which is also the key for every chart */
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:16px;margin-top:26px}
+.tile{padding:8px 14px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.tile .big{font:900 28px/1 Outfit,sans-serif;letter-spacing:-.025em}
+.tile dl{display:grid;grid-template-columns:auto auto;gap:0 8px;margin:0;font-size:11px;line-height:1.35}
+.tile dt{color:var(--muted);white-space:nowrap}.tile dd{margin:0;font-weight:700;text-align:right;font-variant-numeric:tabular-nums}
+.key{display:inline-block;vertical-align:-3px;margin-right:6px}
+main{display:grid;grid-template-columns:1.1fr 1.1fr 1fr;gap:16px;min-height:0;padding-top:26px}
+figure{margin:0;padding:10px 12px 8px;display:flex;flex-direction:column;min-height:0;min-width:0}
+figure .plot{flex:1;min-height:0;position:relative}
+figure .plot svg{position:absolute;inset:0;display:block}
+figcaption{margin-top:4px;color:var(--muted);font-size:11.5px;line-height:1.35}
+.empty{grid-column:1/-1;padding:28px;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;gap:6px}
+footer{display:flex;justify-content:space-between;gap:4px 16px;flex-wrap:wrap}
+/* Short screens drop the prose first; the charts keep the space. */
+@media (max-height:760px){header .sub,figcaption,footer .note{display:none}.tile dl{grid-template-columns:repeat(4,auto)}}
+@media (max-height:560px){.tile dl{display:none}.tile .big{font-size:22px}}
+@media (max-width:1000px){main{grid-template-columns:1fr;grid-template-rows:repeat(3,minmax(0,1fr));gap:34px}figcaption,header .sub,.tile dl,footer .note{display:none}.tiles{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}}
+.ssv text{fill:var(--ink);font-size:11.5px}
+.ssv .mu{fill:var(--muted)}
+.ssv .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:10px;letter-spacing:.05em}
+.ssv .grp{font-weight:700}
+.ssv .gl{stroke:var(--grid);stroke-width:1}
+.ssv .ref{stroke:var(--ink);stroke-width:1.5;stroke-dasharray:4 3}
+.ssv .ax{stroke:var(--ink);stroke-width:2}
+.ssv .wh{stroke:var(--ink);stroke-width:1.5}
+.ssv .lane{fill:var(--teal)}
+.ssv .tick{stroke:var(--ink);stroke-width:1.5}
+.ssv .mk{stroke:var(--ink);stroke-width:1.5}
+.ssv g.hit:hover .mk,.ssv g.hit:focus .mk{stroke-width:3}
+#tip{position:fixed;pointer-events:none;z-index:20;background:var(--surface);border:2px solid var(--ink);box-shadow:2px 2px 0 var(--shadow);border-radius:12px;padding:8px 12px;font-size:13px;line-height:1.4;max-width:320px;display:none}
+/* Dialogs scroll inside; the page itself never does. */
+dialog{background:var(--surface);color:var(--ink);border:2px solid var(--ink);border-radius:22px;box-shadow:6px 6px 0 var(--shadow);padding:24px;width:min(1200px,94vw);max-height:88dvh;overflow:auto}
+dialog::backdrop{background:rgba(15,23,42,.45)}
+dialog form{position:sticky;top:0;float:right}
+table{border-collapse:collapse;width:100%;font-size:13px;font-variant-numeric:tabular-nums}
+th{font:500 11px/1.4 ui-monospace,SFMono-Regular,Menlo,monospace;text-transform:uppercase;letter-spacing:.05em;text-align:left;padding:10px;border-bottom:3px solid var(--ink);white-space:nowrap}
+td{padding:7px 10px;border-bottom:3px solid var(--ink);white-space:nowrap}
+tbody tr:last-child td{border-bottom:0}
+tbody tr.band-0{background:color-mix(in srgb,var(--blue) 45%,transparent)}
+tbody tr.band-1{background:color-mix(in srgb,var(--teal) 45%,transparent)}
+tbody tr.band-2{background:color-mix(in srgb,var(--sage) 45%,transparent)}
+td.num{text-align:right}
+.method dl{display:grid;grid-template-columns:max-content 1fr;gap:10px 24px;margin:0}
+.method dt{font-weight:700}.method dd{margin:0}
+@media (prefers-reduced-motion:reduce){button{transition:none}button:hover{transform:none}}
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <p class="micro">samspel-bench · results</p>
+    <h1>How well do agents work together?</h1>
+    <p class="outcome" id="outcome" hidden></p>
+    <p class="notice" id="notice" hidden></p>
+    <p class="sub" id="family-desc">No agent can finish these tasks alone. The team is scored against the same agents without communication, and against one agent that sees everything.</p>
+  </div>
+  <nav aria-label="Task family and details">
+    <span id="family-nav" style="display:contents"></span>
+    <span class="sep" aria-hidden="true"></span>
+    <button type="button" data-open="scorecard">Scorecard</button>
+    <button type="button" data-open="method">How to read</button>
+  </nav>
+</header>
+
+<section id="tiles" class="tiles" aria-label="Models"></section>
+
+<main id="charts" aria-live="polite">
+  <div class="card empty"><h2>Loading results…</h2></div>
+</main>
+
+<footer>
+  <p class="micro note">Tiles: unweighted means over every family and condition a model ran. Hover or focus a mark for exact values.</p>
+  <p class="micro">An open benchmark by <a href="https://noetive.io">Noetive</a> · <a href="https://github.com/noetive/samspel-bench">github.com/noetive/samspel-bench</a> · <a href="report.json">report.json</a></p>
+</footer>
+
+<dialog id="scorecard" aria-labelledby="scorecard-title">
+  <form method="dialog"><button>Close</button></form>
+  <h2 id="scorecard-title">Scorecard</h2>
+  <div id="table"></div>
+</dialog>
+
+<dialog id="method" aria-labelledby="method-title" class="method">
+  <form method="dialog"><button>Close</button></form>
+  <h2 id="method-title">How to read this</h2>
+  <dl>
+    <dt>team</dt><dd>Agents that talk to each other over a message bus. Any adversaries join on top of the honest team.</dd>
+    <dt>nocomm</dt><dd>The same agents with no way to communicate. The floor.</dd>
+    <dt>oracle</dt><dd>One agent that holds every view and permission. The ceiling.</dd>
+    <dt>broadcast_all</dt><dd>Every private view is handed to every agent up front. No further messages.</dd>
+    <dt>ablation</dt><dd>Messages arrive with their content replaced by noise of the same length.</dd>
+    <dt>G</dt><dd>(S team − S nocomm) / (S oracle − S nocomm), paired by instance. 0 is working alone, 1 is the oracle. Brackets and whiskers are 95% bootstrap intervals over instances.</dd>
+    <dt>Failed runs</dt><dd>Runs that failed for infrastructure reasons. They are left out of every score.</dd>
+  </dl>
+</dialog>
+
+<div id="tip" role="tooltip"></div>
+
+<script>
+// Renders report.json, as written by `samspel report`, from the same
+// directory. Every value from the file reaches the page through textContent
+// or an attribute, never as markup.
+(() => {
+  const NS = "http://www.w3.org/2000/svg";
+  const FAMILIES = {
+    F1: "Information pooling: join clues spread across agents to identify one suspect.",
+    F5: "Relay: pass a specification down a chain under a per-message token cap.",
+    F8: "Ledger: execute agreed transfers exactly once over an unreliable channel.",
+  };
+  // Brand accents in validated order. Colour alone does not separate every
+  // pair for colour-blind readers, so each model also gets its own shape.
+  const FILLS = ["#A855F7", "#0D9488", "#EC4899", "#3B82F6"];
+  const SHAPES = ["circle", "square", "diamond", "triangle", "triangle-down", "hexagon"];
+
+  const $ = (tag, attrs = {}, text) => {
+    const el = document.createElement(tag);
+    for (const [k, v] of Object.entries(attrs)) el.setAttribute(k, v);
+    if (text !== undefined) el.textContent = text;
+    return el;
+  };
+  const s = (tag, attrs = {}, text) => {
+    const el = document.createElementNS(NS, tag);
+    for (const [k, v] of Object.entries(attrs)) el.setAttribute(k, v);
+    if (text !== undefined) el.textContent = text;
+    return el;
+  };
+  const def = (v) => typeof v === "number" && Number.isFinite(v);
+  const f2 = (v) => (def(v) ? v.toFixed(2) : "n/a");
+  const pct = (v) => (def(v) ? Math.round(v * 100) + "%" : "n/a");
+  const ci = (v, c) => (def(v) && c && def(c[0]) ? `${f2(v)} [${f2(c[0])}, ${f2(c[1])}]` : f2(v));
+  const tok = (v) => (!def(v) || v <= 0 ? "n/a" : v >= 1e6 ? +(v / 1e6).toPrecision(3) + "M" : v >= 1e3 ? +(v / 1e3).toPrecision(3) + "k" : String(Math.round(v)));
+  const mean = (xs) => xs.reduce((a, b) => a + b, 0) / xs.length;
+  const uniq = (xs) => [...new Set(xs)].sort();
+
+  const tip = document.getElementById("tip");
+  const showTip = (x, y, lines) => {
+    tip.replaceChildren(...lines.map((l, i) => (i === 0 ? $("strong", {}, l) : $("div", {}, l))));
+    tip.style.display = "block";
+    tip.style.left = Math.max(8, Math.min(x + 14, innerWidth - tip.offsetWidth - 8)) + "px";
+    tip.style.top = (y + 14 + tip.offsetHeight > innerHeight ? y - tip.offsetHeight - 10 : y + 14) + "px";
+  };
+  const hideTip = () => (tip.style.display = "none");
+
+  function marker(parent, x, y, st, lines, r = 6) {
+    const g = s("g", { class: "hit" });
+    if (lines.length) {
+      g.setAttribute("tabindex", "0");
+      g.setAttribute("aria-label", lines.join(", "));
+      g.addEventListener("mousemove", (e) => showTip(e.clientX, e.clientY, lines));
+      g.addEventListener("mouseleave", hideTip);
+      g.addEventListener("focus", () => { const b = g.getBoundingClientRect(); showTip(b.right, b.bottom, lines); });
+      g.addEventListener("blur", hideTip);
+    }
+    const poly = (pts) => s("polygon", { points: pts.map((p) => p.map((n) => n.toFixed(1)).join(",")).join(" ") });
+    let m;
+    switch (st.shape) {
+      case "square": m = s("rect", { x: x - r + 0.5, y: y - r + 0.5, width: 2 * r - 1, height: 2 * r - 1 }); break;
+      case "diamond": m = poly([[x, y - r - 1], [x + r + 1, y], [x, y + r + 1], [x - r - 1, y]]); break;
+      case "triangle": m = poly([[x, y - r - 1], [x + r + 1, y + r], [x - r - 1, y + r]]); break;
+      case "triangle-down": m = poly([[x, y + r + 1], [x + r + 1, y - r], [x - r - 1, y - r]]); break;
+      case "hexagon": m = poly([0, 1, 2, 3, 4, 5].map((i) => [x + (r + 1) * Math.cos((Math.PI / 3) * i), y + (r + 1) * Math.sin((Math.PI / 3) * i)])); break;
+      default: m = s("circle", { cx: x, cy: y, r });
+    }
+    m.setAttribute("class", "mk");
+    m.setAttribute("fill", st.fill);
+    g.append(m, s("circle", { cx: x, cy: y, r: r + 6, fill: "transparent" }));
+    parent.append(g);
+  }
+
+  function keySwatch(st) {
+    const svg = s("svg", { class: "ssv key", width: 16, height: 16, viewBox: "0 0 16 16", "aria-hidden": "true" });
+    marker(svg, 8, 8, st, [], 5);
+    return svg;
+  }
+
+  // A chart is drawn at its container's pixel size, so text keeps its size
+  // and the page fills the viewport at any resolution.
+  function canvas(box, label) {
+    const w = Math.max(box.clientWidth, 120), h = Math.max(box.clientHeight, 60);
+    const svg = s("svg", { class: "ssv", role: "img", "aria-label": label, width: w, height: h, viewBox: `0 0 ${w} ${h}` });
+    box.replaceChildren(svg);
+    return { svg, w, h };
+  }
+
+  function xAxis(svg, left, right, top, bottom, ticks, x, label) {
+    for (const t of ticks) {
+      svg.append(s("line", { class: "gl", x1: x(t), x2: x(t), y1: top, y2: bottom }));
+      svg.append(s("text", { class: "mono mu", x: x(t), y: bottom + 14, "text-anchor": "middle" }, label(t)));
+    }
+    svg.append(s("line", { class: "ax", x1: left, x2: right, y1: bottom, y2: bottom }));
+  }
+
+  // One band per condition; the models share it, offset vertically in key
+  // order, so the row count does not grow with the number of models.
+  function forest(svg, w, h, rows, models) {
+    const conds = uniq(rows.map((r) => r.condition));
+    const left = Math.min(140, Math.max(...conds.map((c) => c.length)) * 6.6 + 12), right = w - 10;
+    const top = 4, bottom = h - 20, band = (bottom - top) / Math.max(conds.length, 1);
+    const k = models.length, step = Math.min(10, (band * 0.8) / Math.max(k, 1)), r = Math.max(2.5, Math.min(5.5, step * 0.5));
+    const out = [];
+    conds.forEach((c, i) => {
+      const cy = top + band * (i + 0.5);
+      if (i > 0) svg.append(s("line", { class: "gl", x1: 0, x2: right, y1: top + band * i, y2: top + band * i }));
+      svg.append(s("text", { class: "grp", x: 0, y: cy + 4 }, c));
+      models.forEach((m, j) => {
+        const row = rows.find((x) => x.condition === c && x.model === m);
+        if (row) out.push({ r: row, y: cy + (j - (k - 1) / 2) * step });
+      });
+    });
+    return { rows: out, left, right, top, bottom, mr: r };
+  }
+
+  const lin = (lo, hi, a, b) => (v) => a + ((v - lo) / (hi - lo)) * (b - a);
+
+  function successChart(box, rows, models, styles) {
+    const { svg, w, h } = canvas(box, "Team success by condition and model");
+    const f = forest(svg, w, h, rows, models);
+    const x = lin(0, 1, f.left, f.right);
+    xAxis(svg, f.left, f.right, f.top, f.bottom, [0, 0.25, 0.5, 0.75, 1], x, pct);
+    for (const { r, y } of f.rows) {
+      const S = r.success || {};
+      if (def(S.nocomm) && def(S.oracle)) {
+        const lo = Math.min(S.nocomm, S.oracle), hi = Math.max(S.nocomm, S.oracle);
+        svg.append(s("rect", { class: "lane", x: x(lo), y: y - 1.5, width: Math.max(x(hi) - x(lo), 2), height: 3 }));
+      }
+      for (const k of ["nocomm", "oracle"]) if (def(S[k])) svg.append(s("line", { class: "tick", x1: x(S[k]), x2: x(S[k]), y1: y - f.mr, y2: y + f.mr }));
+      if (!def(S.team)) continue;
+      const c = r.success_team_ci || [];
+      if (def(c[0])) svg.append(s("line", { class: "wh", x1: x(c[0]), x2: x(c[1]), y1: y, y2: y }));
+      marker(svg, x(S.team), y, styles[r.model], [r.model, `${r.condition} · ${r.instances} instances`, `team ${ci(S.team, c)}`, `alone ${f2(S.nocomm)} · oracle ${f2(S.oracle)}`], f.mr);
+    }
+  }
+
+  function gainChart(box, rows, models, styles) {
+    const { svg, w, h } = canvas(box, "Collaboration gain by condition and model");
+    const f = forest(svg, w, h, rows, models);
+    let lo = -0.25, hi = 1.25;
+    for (const { r } of f.rows) for (const v of [r.gain, ...(r.gain_ci || [])]) if (def(v)) { lo = Math.min(lo, v); hi = Math.max(hi, v); }
+    lo = Math.floor(lo * 4) / 4; hi = Math.ceil(hi * 4) / 4;
+    const x = lin(lo, hi, f.left, f.right);
+    const step = hi - lo > 3 ? 1 : hi - lo > 1.5 ? 0.5 : 0.25;
+    const ticks = [];
+    for (let t = Math.ceil(lo / step) * step; t <= hi + 1e-9; t += step) ticks.push(+t.toFixed(2));
+    xAxis(svg, f.left, f.right, f.top, f.bottom, ticks, x, (t) => (t === 0 ? "0 ALONE" : t === 1 ? "1 ORACLE" : String(t)));
+    for (const v of [0, 1]) svg.append(s("line", { class: "ref", x1: x(v), x2: x(v), y1: f.top, y2: f.bottom }));
+    // A condition where some models have no G says so, instead of leaving a
+    // gap that reads as a missing mark.
+    for (const c of uniq(f.rows.map((o) => o.r.condition))) {
+      const inBand = f.rows.filter((o) => o.r.condition === c);
+      const missing = inBand.filter((o) => !def(o.r.gain));
+      if (!missing.length) continue;
+      const y = mean(inBand.map((o) => o.y));
+      const note = missing.length === inBand.length ? "n/a for every model" : `n/a for ${missing.length} of ${inBand.length} models`;
+      const t = s("text", { class: "mono mu", x: f.right, y: y + 4, "text-anchor": "end" }, note.toUpperCase());
+      t.append(s("title", {}, "G needs paired team, nocomm and oracle runs. Missing: " + missing.map((o) => o.r.model).join(", ")));
+      svg.append(t);
+    }
+    for (const { r, y } of f.rows) {
+      if (!def(r.gain)) continue;
+      const c = r.gain_ci || [];
+      if (def(c[0])) svg.append(s("line", { class: "wh", x1: x(c[0]), x2: x(c[1]), y1: y, y2: y }));
+      marker(svg, x(r.gain), y, styles[r.model], [r.model, `${r.condition} · ${r.instances} instances`, `G ${ci(r.gain, c)}`], f.mr);
+    }
+  }
+
+  function costChart(box, rows, models, styles) {
+    const { svg, w, h } = canvas(box, "Team success against tokens per team run");
+    const left = 38, right = w - 10, top = 16, bottom = h - 20;
+    const pts = rows.filter((r) => def((r.success || {}).team) && r.tokens_per_team_run > 0);
+    if (!pts.length) {
+      svg.append(s("text", { class: "mono mu", x: 0, y: 20 }, "NO COMPLETED TEAM RUNS YET"));
+      return;
+    }
+    const logs = pts.map((r) => Math.log10(r.tokens_per_team_run));
+    // Whole decades, so a tenfold cost difference always spans the same width.
+    let dlo = Math.floor(Math.min(...logs)), dhi = Math.ceil(Math.max(...logs));
+    if (dhi === dlo) dhi++;
+    const x = lin(dlo, dhi, left, right), y = lin(0, 1, bottom, top);
+    for (const t of [0, 0.25, 0.5, 0.75, 1]) {
+      svg.append(s("line", { class: "gl", x1: left, x2: right, y1: y(t), y2: y(t) }));
+      svg.append(s("text", { class: "mono mu", x: left - 6, y: y(t) + 4, "text-anchor": "end" }, pct(t)));
+    }
+    const ticks = [];
+    for (let t = dlo; t <= dhi; t++) ticks.push(t);
+    xAxis(svg, left, right, top, bottom, ticks, x, (t) => tok(10 ** t));
+    svg.append(s("line", { class: "ax", x1: left, x2: left, y1: top, y2: bottom }));
+    svg.append(s("text", { class: "mono mu", x: left + 6, y: top - 5 }, "TEAM SUCCESS ↑"));
+    svg.append(s("text", { class: "mono mu", x: right, y: bottom - 6, "text-anchor": "end" }, "TOKENS PER TEAM RUN, LOG →"));
+    for (const r of pts) {
+      marker(svg, x(Math.log10(r.tokens_per_team_run)), y(r.success.team), styles[r.model],
+        [r.model, r.condition, `team ${f2(r.success.team)}`, `${tok(r.tokens_per_team_run)} tokens · ${r.messages_per_team_run.toFixed(1)} messages`], 5);
+    }
+  }
+
+  const CHARTS = [
+    ["Team success", "", successChart, "Marker and whisker: team success with its 95% interval. Lane: from working alone to the oracle."],
+    ["Collaboration gain", "teal", gainChart, "0 is working alone, 1 is the oracle. Right of 0 means talking helped."],
+    ["Success against cost", "sage", costChart, "One point per model and condition. Up and to the left is better."],
+  ];
+
+  let rows = [], models = [], styles = {}, family = "";
+
+  // The headline is computed from the data on every refresh, with the same
+  // unweighted means as the tiles, so it can never outlive the numbers.
+  function renderOutcome() {
+    const avg = (m, pick) => { const v = rows.filter((r) => !m || r.model === m).map(pick).filter(def); return v.length ? mean(v) : NaN; };
+    const team = avg(null, (r) => (r.success || {}).team), alone = avg(null, (r) => (r.success || {}).nocomm);
+    const el = document.getElementById("outcome");
+    el.hidden = !def(team);
+    if (el.hidden) return;
+    const parts = [];
+    if (def(alone)) {
+      parts.push(team - alone > 0.05
+        ? `Talking pays off: teams solved ${pct(team)} of tasks, while the same agents working alone solved ${pct(alone)}.`
+        : `Talking has not paid off yet: teams solved ${pct(team)} of tasks, and the same agents working alone solved ${pct(alone)}.`);
+    } else {
+      parts.push(`Teams solved ${pct(team)} of tasks.`);
+    }
+    const scored = models.map((m) => ({ m, s: avg(m, (r) => (r.success || {}).team), t: avg(m, (r) => (r.tokens_per_team_run > 0 ? r.tokens_per_team_run : NaN)) })).filter((x) => def(x.s));
+    if (scored.length > 1) {
+      const top = Math.max(...scored.map((x) => x.s));
+      const leaders = scored.filter((x) => top - x.s < 0.005);
+      const names = leaders.map((x) => x.m);
+      const who = names.length === 1 ? names[0] : names.slice(0, -1).join(", ") + " and " + names[names.length - 1];
+      let lead = `${who} ${names.length === 1 ? "led" : "tied for the lead"} at ${pct(top)}`;
+      const priced = leaders.filter((x) => def(x.t));
+      if (names.length > 1 && priced.length > 1) {
+        const cheap = priced.reduce((a, b) => (b.t < a.t ? b : a));
+        lead += `; ${cheap.m} got there with the fewest tokens, ${tok(cheap.t)} per run`;
+      }
+      parts.push(lead + ".");
+    }
+    el.textContent = parts.join(" ");
+  }
+
+  function renderTiles() {
+    const box = document.getElementById("tiles");
+    box.replaceChildren();
+    for (const m of models) {
+      const mine = rows.filter((r) => r.model === m);
+      const team = mine.map((r) => (r.success || {}).team).filter(def);
+      const gain = mine.map((r) => r.gain).filter(def);
+      const cost = mine.map((r) => r.tokens_per_team_run).filter((v) => v > 0);
+      const card = $("article", { class: "card tile" });
+      const tab = $("div", { class: "tab", title: m });
+      tab.append(keySwatch(styles[m]), document.createTextNode(m));
+      const dl = $("dl");
+      for (const [k, v] of [["gain", gain.length ? f2(mean(gain)) : "n/a"], ["tokens/run", cost.length ? tok(mean(cost)) : "n/a"],
+        ["instances", mine.reduce((a, r) => a + r.instances, 0)], ["failed", mine.reduce((a, r) => a + r.errors, 0)]]) dl.append($("dt", {}, k), $("dd", {}, String(v)));
+      const big = $("div");
+      big.append($("p", { class: "micro" }, "team success"), $("div", { class: "big" }, team.length ? pct(mean(team)) : "n/a"));
+      card.append(tab, big, dl);
+      box.append(card);
+    }
+  }
+
+  function renderCharts() {
+    const main = document.getElementById("charts");
+    const fr = rows.filter((r) => r.family === family);
+    main.replaceChildren();
+    for (const [title, cls, draw, caption] of CHARTS) {
+      const fig = $("figure", { class: "card" });
+      const plot = $("div", { class: "plot" });
+      fig.append($("div", { class: "tab " + cls }, `${family} · ${title}`), plot, $("figcaption", {}, caption));
+      main.append(fig);
+      fig._draw = () => draw(plot, fr, models, styles);
+    }
+    for (const fig of main.children) fig._draw();
+    document.getElementById("family-desc").textContent = FAMILIES[family] || family;
+    for (const b of document.querySelectorAll("#family-nav button")) b.setAttribute("aria-pressed", String(b.dataset.family === family));
+  }
+
+  function renderNav() {
+    const nav = document.getElementById("family-nav");
+    nav.replaceChildren(...uniq(rows.map((r) => r.family)).map((f) => {
+      const b = $("button", { type: "button", "data-family": f, "aria-pressed": "false", title: FAMILIES[f] || f }, f);
+      b.addEventListener("click", () => { family = f; renderCharts(); });
+      return b;
+    }));
+  }
+
+  function renderTable() {
+    const fams = uniq(rows.map((r) => r.family));
+    const table = $("table");
+    const head = $("tr");
+    for (const h of ["Model", "Family", "Condition", "Instances", "S team [95%]", "S nocomm", "S oracle", "G [95%]", "S broadcast_all", "S ablation", "Tokens", "Messages", "Failed"]) head.append($("th", { scope: "col" }, h));
+    const thead = $("thead"); thead.append(head);
+    const tbody = $("tbody");
+    for (const r of rows) {
+      const S = r.success || {};
+      const tr = $("tr", { class: "band-" + (fams.indexOf(r.family) % 3) });
+      const cells = [[r.model], [r.family], [r.condition], [r.instances, 1], [ci(S.team, r.success_team_ci), 1], [f2(S.nocomm), 1], [f2(S.oracle), 1], [ci(r.gain, r.gain_ci), 1],
+        [f2(S.broadcast_all), 1], [f2(S.ablation), 1], [tok(r.tokens_per_team_run), 1], [(r.messages_per_team_run || 0).toFixed(1), 1], [r.errors, 1]];
+      for (const [v, num] of cells) tr.append($("td", num ? { class: "num" } : {}, String(v)));
+      tbody.append(tr);
+    }
+    table.append(thead, tbody);
+    document.getElementById("table").replaceChildren(table);
+  }
+
+  function message(title, body) {
+    const card = $("div", { class: "card empty" });
+    card.append($("h2", {}, title), $("p", {}, body));
+    document.getElementById("charts").replaceChildren(card);
+  }
+
+  for (const b of document.querySelectorAll("[data-open]")) b.addEventListener("click", () => document.getElementById(b.dataset.open).showModal());
+  let pending;
+  new ResizeObserver(() => {
+    cancelAnimationFrame(pending);
+    pending = requestAnimationFrame(() => { hideTip(); for (const fig of document.getElementById("charts").children) if (fig._draw) fig._draw(); });
+  }).observe(document.getElementById("charts"));
+
+  // report.json is fetched again every few seconds and the page redraws when
+  // it changes, so a published run appears without a reload.
+  let last = null;
+  function show(text) {
+    const data = JSON.parse(text);
+    rows = Array.isArray(data) ? data : [];
+    if (!rows.length) {
+      message("No results yet", "The first runs are in progress. Results appear here once they are published.");
+      return;
+    }
+    // A model keeps one fill and shape everywhere, fixed by its place in
+    // sorted order.
+    models = uniq(rows.map((r) => r.model));
+    styles = Object.fromEntries(models.map((m, i) => [m, { fill: FILLS[i] || "#64748B", shape: SHAPES[i % SHAPES.length] }]));
+    const fams = uniq(rows.map((r) => r.family));
+    if (!fams.includes(family)) family = fams[0];
+    renderNav();
+    // Intervals need several instances per cell. While most cells have
+    // none, the numbers are a first look, and the page says so.
+    const thin = rows.filter((r) => !def((r.success_team_ci || [])[0])).length;
+    const n = document.getElementById("notice");
+    n.hidden = thin * 2 <= rows.length;
+    if (!n.hidden) {
+      const most = Math.max(...rows.map((r) => r.instances));
+      n.textContent = `Preliminary: at most ${most} instance${most === 1 ? "" : "s"} per cell, too few for confidence intervals.`;
+    }
+    renderOutcome();
+    renderTiles();
+    renderTable();
+    renderCharts();
+  }
+  function load() {
+    fetch("report.json", { cache: "no-store" })
+      .then((res) => (res.status === 404 ? "[]" : res.ok ? res.text() : Promise.reject(new Error("HTTP " + res.status))))
+      .then((text) => {
+        if (text === last) return;
+        show(text);
+        last = text;
+      })
+      .catch((err) => {
+        // A failed refresh keeps the results already on screen; only a
+        // page that never loaded says so.
+        if (last === null) message("Results could not be loaded", `report.json did not load (${err.message}). If you opened the page from disk, serve the folder over HTTP instead.`);
+      });
+  }
+  load();
+  setInterval(load, 5000);
+})();
+</script>
+</body>
+</html>

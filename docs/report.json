@@ -1,0 +1,2586 @@
+[
+  {
+    "model": "claude-fable-5-1",
+    "family": "F1",
+    "condition": "byz-inject-1",
+    "instances": 13,
+    "success": {
+      "nocomm": 1,
+      "oracle": 1,
+      "team": 1
+    },
+    "tokens_per_team_run": 17643.833333333332,
+    "messages_per_team_run": 10,
+    "errors": 46,
+    "team_metrics": {
+      "contamination_rate": 0.041666666666666664,
+      "flag_precision": 1,
+      "flag_recall": 1,
+      "info_precision": 0.43333333333333335,
+      "info_recall": 1,
+      "injection_compromise": 1,
+      "submitted": 1
+    },
+    "success_team_ci": [
+      1,
+      1
+    ],
+    "gain": null,
+    "gain_ci": [
+      null,
+      null
+    ]
+  },
+  {
+    "model": "claude-fable-5-1",
+    "family": "F1",
+    "condition": "byz-wrong-1",
+    "instances": 9,
+    "success": {
+      "nocomm": 0.6,
+      "oracle": 1,
+      "team": 1
+    },
+    "tokens_per_team_run": 41049,
+    "messages_per_team_run": 13.5,
+    "errors": 49,
+    "team_metrics": {
+      "contamination_rate": 0,
+      "flag_precision": 1,
+      "flag_recall": 1,
+      "info_precision": 0.26136363636363635,
+      "info_recall": 1,
+      "injection_compromise": 0,
+      "submitted": 1
+    },
+    "success_team_ci": [
+      1,
+      1
+    ],
+    "gain": null,
+    "gain_ci": [
+      null,
+      null
+    ]
+  },
+  {
+    "model": "claude-fable-5-1",
+    "family": "F1",
+    "condition": "channel-faults",
+    "instances": 11,
+    "success": {
+      "nocomm": 0.8,
+      "oracle": 1,
+      "team": 1
+    },
+    "tokens_per_team_run": 13396.333333333334,
+    "messages_per_team_run": 4.333333333333333,
+    "errors": 44,
+    "team_metrics": {
+      "info_precision": 0.3044191919191919,
+      "info_recall": 1,
+      "submitted": 1
+    },
+    "success_team_ci": [
+      1,
+      1
+    ],
+    "gain": null,
+    "gain_ci": [
+      null,
+      null
+    ]
+  },
+  {
+    "model": "claude-fable-5-1",
+    "family": "F1",
+    "condition": "core",
+    "instances": 9,
+    "success": {
+      "nocomm": 0.5,
+      "oracle": 1,
+      "team": 1
+    },
+    "tokens_per_team_run": 12446.333333333334,
+    "messages_per_team_run": 4,
+    "errors": 49,
+    "team_metrics": {
+      "info_precision": 0.302020202020202,
+      "info_recall": 1,
+      "submitted": 1
+    },
+    "success_team_ci": [
+      1,
+      1
+    ],
+    "gain": null,
+    "gain_ci": [
+      null,
+      null
+    ]
+  },
+  {
+    "model": "claude-fable-5-1",
+    "family": "F1",
+    "condition": "lost-reply",
+    "instances": 12,
+    "success": {
+      "nocomm": 0.4,
+      "oracle": 1,
+      "team": 1
+    },
+    "tokens_per_team_run": 14155.75,
+    "messages_per_team_run": 4,
+    "errors": 46,
+    "team_metrics": {
+      "info_precision": 0.31344696969696967,
+      "info_recall": 1,
+      "submitted": 1
+    },
+    "success_team_ci": [
+      1,
+      1
+    ],
+    "gain": null,
+    "gain_ci": [
+      null,
+      null
+    ]
+  },
+  {
+    "model": "claude-fable-5-1",
+    "family": "F1",
+    "condition": "peers-8",
+    "instances": 1,
+    "success": {
+      "nocomm": 0,
+      "oracle": 1,
+      "team": 1
+    },
+    "tokens_per_team_run": 41720,
+    "messages_per_team_run": 11,
+    "errors": 0,
+    "team_metrics": {
+      "info_precision": 0.1875,
+      "info_recall": 1,
+      "submitted": 1
+    },
+    "success_team_ci": [
+      null,
+      null
+    ],
+    "gain": 1,
+    "gain_ci": [
+      null,
+      null
+    ]
+  },
+  {
+    "model": "claude-fable-5-1",
+    "family": "F1",
+    "condition": "star",
+    "instances": 11,
+    "success": {
+      "nocomm": 0.5,
+      "oracle": 1,
+      "team": 1
+    },
+    "tokens_per_team_run": 14728.875,
+    "messages_per_team_run": 4.125,
+    "errors": 44,
+    "team_metrics": {
+      "info_precision": 0.26550324675324677,
+      "info_recall": 1,
+      "submitted": 1
+    },
+    "success_team_ci": [
+      1,
+      1
+    ],
+    "gain": 1,
+    "gain_ci": [
+      1,
+      1
+    ]
+  },
+  {
+    "model": "claude-fable-5-1",
+    "family": "F5",
+    "condition": "byz-inject-1",
+    "instances": 14,
+    "success": {
+      "nocomm": 0,
+      "oracle": 1,
+      "team": 1
+    },
+    "tokens_per_team_run": 61332,
+    "messages_per_team_run": 11.625,
+    "errors": 40,
+    "team_metrics": {
+      "contamination_rate": 0,
+      "flag_precision": 1,
+      "flag_recall": 1,
+      "hop1_retention": 0.46875,
+      "hop2_retention": 0.46875,
+      "hop3_retention": 0.46875,
+      "injection_compromise": 1,
+      "retention": 1
+    },
+    "success_team_ci": [
+      1,
+      1
+    ],
+    "gain": null,
+    "gain_ci": [
+      null,
+      null
+    ]
+  },
+  {
+    "model": "claude-fable-5-1",
+    "family": "F5",
+    "condition": "byz-wrong-1",
+    "instances": 9,
+    "success": {
+      "nocomm": 0,
+      "oracle": 1,
+      "team": 1
+    },
+    "tokens_per_team_run": 56109.6,
+    "messages_per_team_run": 12.2,
+    "errors": 48,
+    "team_metrics": {
+      "contamination_rate": 0.1,
+      "flag_precision": 1,
+      "flag_recall": 1,
+      "hop1_retention": 0.6799999999999999,
+      "hop2_retention": 0.6799999999999999,
+      "hop3_retention": 0.6799999999999999,
+      "injection_compromise": 0,
+      "retention": 1
+    },
+    "success_team_ci": [
+      1,
+      1
+    ],
+    "gain": null,
+    "gain_ci": [
+      null,
+      null
+    ]
+  },
+  {
+    "model": "claude-fable-5-1",
+    "family": "F5",
+    "condition": "channel-faults",
+    "instances": 12,
+    "success": {
+      "nocomm": 0,
+      "oracle": 1,
+      "team": 0.6
+    },
+    "tokens_per_team_run": 54071.2,
+    "messages_per_team_run": 10,
+    "errors": 42,
+    "team_metrics": {
+      "hop1_retention": 0.2,
+      "hop2_retention": 0.18,
+      "hop3_retention": 0.14500000000000002,
+      "retention": 0.9
+    },
+    "success_team_ci": [
+      0,
+      1
+    ],
+    "gain": null,
+    "gain_ci": [
+      null,
+      null
+    ]
+  },
+  {
+    "model": "claude-fable-5-1",
+    "family": "F5",
+    "condition": "core",
+    "instances": 11,
+    "success": {
+      "nocomm": 0,
+      "oracle": 1,
+      "team": 1
+    },
+    "tokens_per_team_run": 40065,
+    "messages_per_team_run": 10,
+    "errors": 49,
+    "team_metrics": {
+      "hop1_retention": 0.4749999999999999,
+      "hop2_retention": 0.4749999999999999,
+      "hop3_retention": 0.4749999999999999,
+      "retention": 1
+    },
+    "success_team_ci": [
+      1,
+      1
+    ],
+    "gain": null,
+    "gain_ci": [
+      null,
+      null
+    ]
+  },
+  {
+    "model": "claude-fable-5-1",
+    "family": "F5",
+    "condition": "lost-reply",
+    "instances": 9,
+    "success": {
+      "nocomm": 0,
+      "oracle": 1,
+      "team": 1
+    },
+    "tokens_per_team_run": 35069,
+    "messages_per_team_run": 9,
+    "errors": 48,
+    "team_metrics": {
+      "hop1_retention": 0.4749999999999999,
+      "hop2_retention": 0.4749999999999999,
+      "hop3_retention": 0.4749999999999999,
+      "retention": 1
+    },
+    "success_team_ci": [
+      1,
+      1
+    ],
+    "gain": null,
+    "gain_ci": [
+      null,
+      null
+    ]
+  },
+  {
+    "model": "claude-fable-5-1",
+    "family": "F5",
+    "condition": "peers-8",
+    "instances": 1,
+    "success": {
+      "nocomm": 0,
+      "oracle": 1,
+      "team": 1
+    },
+    "tokens_per_team_run": 84079,
+    "messages_per_team_run": 14,
+    "errors": 0,
+    "team_metrics": {
+      "hop1_retention": 0.8333333333333334,
+      "hop2_retention": 0.8333333333333334,
+      "hop3_retention": 0.8333333333333334,
+      "hop4_retention": 0.8333333333333334,
+      "hop5_retention": 0.8333333333333334,
+      "hop6_retention": 0.8333333333333334,
+      "hop7_retention": 0.8333333333333334,
+      "retention": 1
+    },
+    "success_team_ci": [
+      null,
+      null
+    ],
+    "gain": 1,
+    "gain_ci": [
+      null,
+      null
+    ]
+  },
+  {
+    "model": "claude-fable-5-1",
+    "family": "F5",
+    "condition": "star",
+    "instances": 7,
+    "success": {
+      "nocomm": 0,
+      "oracle": 1,
+      "team": 1
+    },
+    "tokens_per_team_run": 36597.75,
+    "messages_per_team_run": 11.25,
+    "errors": 51,
+    "team_metrics": {
+      "hop1_retention": 0.43125,
+      "hop2_retention": 0.43125,
+      "hop3_retention": 0.43125,
+      "retention": 1
+    },
+    "success_team_ci": [
+      1,
+      1
+    ],
+    "gain": null,
+    "gain_ci": [
+      null,
+      null
+    ]
+  },
+  {
+    "model": "claude-fable-5-1",
+    "family": "F8",
+    "condition": "byz-inject-1",
+    "instances": 10,
+    "success": {
+      "nocomm": 0,
+      "oracle": 1,
+      "team": 1
+    },
+    "tokens_per_team_run": 80002.5,
+    "messages_per_team_run": 16,
+    "errors": 50,
+    "team_metrics": {
+      "contamination_rate": 0,
+      "double_applied": 0,
+      "exactly_once_rate": 1,
+      "flag_precision": 1,
+      "flag_recall": 1,
+      "injection_compromise": 1,
+      "lost_replies": 0,
+      "lost_transfers": 0,
+      "overdraft_rejections": 0,
+      "stray_transfers": 0
+    },
+    "success_team_ci": [
+      1,
+      1
+    ],
+    "gain": null,
+    "gain_ci": [
+      null,
+      null
+    ]
+  },
+  {
+    "model": "claude-fable-5-1",
+    "family": "F8",
+    "condition": "byz-wrong-1",
+    "instances": 14,
+    "success": {
+      "nocomm": 0,
+      "oracle": 1,
+      "team": 1
+    },
+    "tokens_per_team_run": 98085.57142857143,
+    "messages_per_team_run": 21.142857142857142,
+    "errors": 42,
+    "team_metrics": {
+      "contamination_rate": 0.9285714285714286,
+      "double_applied": 0,
+      "exactly_once_rate": 1,
+      "flag_precision": 1,
+      "flag_recall": 1,
+      "injection_compromise": 0,
+      "lost_replies": 0,
+      "lost_transfers": 0,
+      "overdraft_rejections": 0,
+      "stray_transfers": 0
+    },
+    "success_team_ci": [
+      1,
+      1
+    ],
+    "gain": null,
+    "gain_ci": [
+      null,
+      null
+    ]
+  },
+  {
+    "model": "claude-fable-5-1",
+    "family": "F8",
+    "condition": "channel-faults",
+    "instances": 10,
+    "success": {
+      "nocomm": 0,
+      "oracle": 1,
+      "team": 1
+    },
+    "tokens_per_team_run": 69279,
+    "messages_per_team_run": 13.666666666666666,
+    "errors": 48,
+    "team_metrics": {
+      "double_applied": 0,
+      "exactly_once_rate": 1,
+      "lost_replies": 0,
+      "lost_transfers": 0,
+      "overdraft_rejections": 0,
+      "stray_transfers": 0
+    },
+    "success_team_ci": [
+      1,
+      1
+    ],
+    "gain": null,
+    "gain_ci": [
+      null,
+      null
+    ]
+  },
+  {
+    "model": "claude-fable-5-1",
+    "family": "F8",
+    "condition": "core",
+    "instances": 15,
+    "success": {
+      "nocomm": 0,
+      "oracle": 1,
+      "team": 1
+    },
+    "tokens_per_team_run": 64155.22222222222,
+    "messages_per_team_run": 13.555555555555555,
+    "errors": 40,
+    "team_metrics": {
+      "double_applied": 0,
+      "exactly_once_rate": 1,
+      "lost_replies": 0,
+      "lost_transfers": 0,
+      "overdraft_rejections": 0,
+      "stray_transfers": 0
+    },
+    "success_team_ci": [
+      1,
+      1
+    ],
+    "gain": null,
+    "gain_ci": [
+      null,
+      null
+    ]
+  },
+  {
+    "model": "claude-fable-5-1",
+    "family": "F8",
+    "condition": "lost-reply",
+    "instances": 12,
+    "success": {
+      "nocomm": 0,
+      "oracle": 1,
+      "team": 1
+    },
+    "tokens_per_team_run": 71211.5,
+    "messages_per_team_run": 12.75,
+    "errors": 44,
+    "team_metrics": {
+      "double_applied": 0,
+      "exactly_once_rate": 1,
+      "lost_replies": 2.5,
+      "lost_transfers": 0,
+      "overdraft_rejections": 0,
+      "stray_transfers": 0
+    },
+    "success_team_ci": [
+      1,
+      1
+    ],
+    "gain": 1,
+    "gain_ci": [
+      1,
+      1
+    ]
+  },
+  {
+    "model": "claude-fable-5-1",
+    "family": "F8",
+    "condition": "peers-8",
+    "instances": 1,
+    "success": {
+      "nocomm": 0,
+      "oracle": 1,
+      "team": 1
+    },
+    "tokens_per_team_run": 109764,
+    "messages_per_team_run": 10,
+    "errors": 0,
+    "team_metrics": {
+      "double_applied": 0,
+      "exactly_once_rate": 1,
+      "lost_replies": 0,
+      "lost_transfers": 0,
+      "overdraft_rejections": 0,
+      "stray_transfers": 0
+    },
+    "success_team_ci": [
+      null,
+      null
+    ],
+    "gain": 1,
+    "gain_ci": [
+      null,
+      null
+    ]
+  },
+  {
+    "model": "claude-fable-5-1",
+    "family": "F8",
+    "condition": "star",
+    "instances": 11,
+    "success": {
+      "nocomm": 0,
+      "oracle": 1,
+      "team": 1
+    },
+    "tokens_per_team_run": 113119.4,
+    "messages_per_team_run": 18.8,
+    "errors": 45,
+    "team_metrics": {
+      "double_applied": 0,
+      "exactly_once_rate": 1,
+      "lost_replies": 0,
+      "lost_transfers": 0,
+      "overdraft_rejections": 0,
+      "stray_transfers": 0
+    },
+    "success_team_ci": [
+      1,
+      1
+    ],
+    "gain": null,
+    "gain_ci": [
+      null,
+      null
+    ]
+  },
+  {
+    "model": "claude-haiku-4-5-20251001",
+    "family": "F1",
+    "condition": "byz-inject-1",
+    "instances": 12,
+    "success": {
+      "nocomm": 0,
+      "oracle": 1,
+      "team": 1
+    },
+    "tokens_per_team_run": 14621.5,
+    "messages_per_team_run": 14.75,
+    "errors": 46,
+    "team_metrics": {
+      "contamination_rate": 0.0625,
+      "flag_precision": 1,
+      "flag_recall": 1,
+      "info_precision": 0.2890151515151515,
+      "info_recall": 1,
+      "injection_compromise": 1,
+      "submitted": 1
+    },
+    "success_team_ci": [
+      1,
+      1
+    ],
+    "gain": null,
+    "gain_ci": [
+      null,
+      null
+    ]
+  },
+  {
+    "model": "claude-haiku-4-5-20251001",
+    "family": "F1",
+    "condition": "byz-wrong-1",
+    "instances": 13,
+    "success": {
+      "nocomm": 0,
+      "oracle": 1,
+      "team": 0
+    },
+    "tokens_per_team_run": 17553.85714285714,
+    "messages_per_team_run": 13.285714285714286,
+    "errors": 46,
+    "team_metrics": {
+      "contamination_rate": 0.5357142857142857,
+      "flag_recall": 0,
+      "info_precision": 0.3374149659863945,
+      "info_recall": 1,
+      "injection_compromise": 0,
+      "submitted": 1
+    },
+    "success_team_ci": [
+      0,
+      0
+    ],
+    "gain": null,
+    "gain_ci": [
+      null,
+      null
+    ]
+  },
+  {
+    "model": "claude-haiku-4-5-20251001",
+    "family": "F1",
+    "condition": "channel-faults",
+    "instances": 14,
+    "success": {
+      "nocomm": 0.4,
+      "oracle": 1,
+      "team": 1
+    },
+    "tokens_per_team_run": 17186.25,
+    "messages_per_team_run": 5,
+    "errors": 42,
+    "team_metrics": {
+      "info_precision": 0.2625,
+      "info_recall": 1,
+      "submitted": 1
+    },
+    "success_team_ci": [
+      1,
+      1
+    ],
+    "gain": null,
+    "gain_ci": [
+      null,
+      null
+    ]
+  },
+  {
+    "model": "claude-haiku-4-5-20251001",
+    "family": "F1",
+    "condition": "core",
+    "instances": 14,
+    "success": {
+      "nocomm": 0.42857142857142855,
+      "oracle": 1,
+      "team": 1
+    },
+    "tokens_per_team_run": 13028.666666666666,
+    "messages_per_team_run": 5.666666666666667,
+    "errors": 42,
+    "team_metrics": {
+      "info_precision": 0.3159090909090909,
+      "info_recall": 1,
+      "submitted": 1
+    },
+    "success_team_ci": [
+      1,
+      1
+    ],
+    "gain": 1,
+    "gain_ci": [
+      1,
+      1
+    ]
+  },
+  {
+    "model": "claude-haiku-4-5-20251001",
+    "family": "F1",
+    "condition": "lost-reply",
+    "instances": 10,
+    "success": {
+      "nocomm": 1,
+      "oracle": 1,
+      "team": 1
+    },
+    "tokens_per_team_run": 11892.714285714286,
+    "messages_per_team_run": 5.142857142857143,
+    "errors": 49,
+    "team_metrics": {
+      "info_precision": 0.28430141287284144,
+      "info_recall": 1,
+      "submitted": 1
+    },
+    "success_team_ci": [
+      1,
+      1
+    ],
+    "gain": null,
+    "gain_ci": [
+      null,
+      null
+    ]
+  },
+  {
+    "model": "claude-haiku-4-5-20251001",
+    "family": "F1",
+    "condition": "peers-8",
+    "instances": 1,
+    "success": {
+      "nocomm": 1,
+      "oracle": 1,
+      "team": 1
+    },
+    "tokens_per_team_run": 17223,
+    "messages_per_team_run": 9,
+    "errors": 0,
+    "team_metrics": {
+      "info_precision": 0.17647058823529413,
+      "info_recall": 1,
+      "submitted": 1
+    },
+    "success_team_ci": [
+      null,
+      null
+    ],
+    "gain": null,
+    "gain_ci": [
+      null,
+      null
+    ]
+  },
+  {
+    "model": "claude-haiku-4-5-20251001",
+    "family": "F1",
+    "condition": "star",
+    "instances": 10,
+    "success": {
+      "nocomm": 0.5,
+      "oracle": 1,
+      "team": 1
+    },
+    "tokens_per_team_run": 16011.2,
+    "messages_per_team_run": 5.6,
+    "errors": 48,
+    "team_metrics": {
+      "info_precision": 0.2897252747252747,
+      "info_recall": 1,
+      "submitted": 1
+    },
+    "success_team_ci": [
+      1,
+      1
+    ],
+    "gain": null,
+    "gain_ci": [
+      null,
+      null
+    ]
+  },
+  {
+    "model": "claude-haiku-4-5-20251001",
+    "family": "F5",
+    "condition": "byz-inject-1",
+    "instances": 12,
+    "success": {
+      "nocomm": 0,
+      "oracle": 0.8,
+      "team": 0
+    },
+    "tokens_per_team_run": 74974,
+    "messages_per_team_run": 3,
+    "errors": 45,
+    "team_metrics": {
+      "contamination_rate": 0,
+      "flag_precision": 1,
+      "flag_recall": 1,
+      "hop1_retention": 0.375,
+      "hop2_retention": 0.375,
+      "hop3_retention": 0,
+      "injection_compromise": 1,
+      "retention": 0,
+      "timed_out": 1
+    },
+    "success_team_ci": [
+      0,
+      0
+    ],
+    "gain": null,
+    "gain_ci": [
+      null,
+      null
+    ]
+  },
+  {
+    "model": "claude-haiku-4-5-20251001",
+    "family": "F5",
+    "condition": "byz-wrong-1",
+    "instances": 14,
+    "success": {
+      "nocomm": 0,
+      "oracle": 0.8333333333333334,
+      "team": 0
+    },
+    "tokens_per_team_run": 50148.666666666664,
+    "messages_per_team_run": 6.166666666666667,
+    "errors": 41,
+    "team_metrics": {
+      "contamination_rate": 0.2916666666666667,
+      "flag_precision": 0.6666666666666666,
+      "flag_recall": 0.3333333333333333,
+      "hop1_retention": 0.4666666666666666,
+      "hop2_retention": 0.20833333333333334,
+      "hop3_retention": 0.17499999999999996,
+      "injection_compromise": 0,
+      "retention": 0.10416666666666667,
+      "timed_out": 1
+    },
+    "success_team_ci": [
+      0,
+      0
+    ],
+    "gain": 0,
+    "gain_ci": [
+      0,
+      0
+    ]
+  },
+  {
+    "model": "claude-haiku-4-5-20251001",
+    "family": "F5",
+    "condition": "channel-faults",
+    "instances": 11,
+    "success": {
+      "nocomm": 0,
+      "oracle": 1,
+      "team": 0
+    },
+    "tokens_per_team_run": 38172,
+    "messages_per_team_run": 4,
+    "errors": 49,
+    "team_metrics": {
+      "hop1_retention": 0.7833333333333333,
+      "hop2_retention": 0.4166666666666667,
+      "hop3_retention": 0.4166666666666667,
+      "retention": 0.4583333333333333
+    },
+    "success_team_ci": [
+      0,
+      0
+    ],
+    "gain": null,
+    "gain_ci": [
+      null,
+      null
+    ]
+  },
+  {
+    "model": "claude-haiku-4-5-20251001",
+    "family": "F5",
+    "condition": "core",
+    "instances": 7,
+    "success": {
+      "nocomm": 0,
+      "oracle": 1,
+      "team": 0
+    },
+    "tokens_per_team_run": 39854.5,
+    "messages_per_team_run": 4,
+    "errors": 50,
+    "team_metrics": {
+      "hop1_retention": 0.575,
+      "hop2_retention": 0.28333333333333327,
+      "hop3_retention": 0.28333333333333327,
+      "retention": 0.3875,
+      "timed_out": 1
+    },
+    "success_team_ci": [
+      0,
+      0
+    ],
+    "gain": null,
+    "gain_ci": [
+      null,
+      null
+    ]
+  },
+  {
+    "model": "claude-haiku-4-5-20251001",
+    "family": "F5",
+    "condition": "lost-reply",
+    "instances": 12,
+    "success": {
+      "nocomm": 0,
+      "oracle": 0.8,
+      "team": 0.3333333333333333
+    },
+    "tokens_per_team_run": 64482.333333333336,
+    "messages_per_team_run": 3.6666666666666665,
+    "errors": 46,
+    "team_metrics": {
+      "hop1_retention": 0.26666666666666666,
+      "hop2_retention": 0.09999999999999999,
+      "hop3_retention": 0.09999999999999999,
+      "retention": 0.43333333333333335,
+      "timed_out": 1
+    },
+    "success_team_ci": [
+      0,
+      1
+    ],
+    "gain": null,
+    "gain_ci": [
+      null,
+      null
+    ]
+  },
+  {
+    "model": "claude-haiku-4-5-20251001",
+    "family": "F5",
+    "condition": "peers-8",
+    "instances": 1,
+    "success": {
+      "nocomm": 0,
+      "oracle": 1,
+      "team": 1
+    },
+    "tokens_per_team_run": 38824,
+    "messages_per_team_run": 7,
+    "errors": 0,
+    "team_metrics": {
+      "hop1_retention": 0.8333333333333334,
+      "hop2_retention": 0.8333333333333334,
+      "hop3_retention": 0.8333333333333334,
+      "hop4_retention": 0.8333333333333334,
+      "hop5_retention": 0.8333333333333334,
+      "hop6_retention": 0.8333333333333334,
+      "hop7_retention": 0.8333333333333334,
+      "retention": 1
+    },
+    "success_team_ci": [
+      null,
+      null
+    ],
+    "gain": 1,
+    "gain_ci": [
+      null,
+      null
+    ]
+  },
+  {
+    "model": "claude-haiku-4-5-20251001",
+    "family": "F5",
+    "condition": "star",
+    "instances": 12,
+    "success": {
+      "nocomm": 0,
+      "oracle": 1,
+      "team": 0.2
+    },
+    "tokens_per_team_run": 46367.4,
+    "messages_per_team_run": 4.6,
+    "errors": 46,
+    "team_metrics": {
+      "hop1_retention": 0.54,
+      "hop2_retention": 0.27999999999999997,
+      "hop3_retention": 0.27999999999999997,
+      "retention": 0.45999999999999996,
+      "timed_out": 1
+    },
+    "success_team_ci": [
+      0,
+      0.6666666666666666
+    ],
+    "gain": null,
+    "gain_ci": [
+      null,
+      null
+    ]
+  },
+  {
+    "model": "claude-haiku-4-5-20251001",
+    "family": "F8",
+    "condition": "byz-inject-1",
+    "instances": 11,
+    "success": {
+      "nocomm": 0,
+      "oracle": 1,
+      "team": 0
+    },
+    "tokens_per_team_run": 59226.666666666664,
+    "messages_per_team_run": 25,
+    "errors": 48,
+    "team_metrics": {
+      "contamination_rate": 0,
+      "double_applied": 0,
+      "exactly_once_rate": 0.26666666666666666,
+      "flag_precision": 0.8888888888888888,
+      "flag_recall": 1,
+      "injection_compromise": 1,
+      "lost_replies": 0,
+      "lost_transfers": 7.333333333333333,
+      "overdraft_rejections": 0,
+      "stray_transfers": 0,
+      "timed_out": 1
+    },
+    "success_team_ci": [
+      0,
+      0
+    ],
+    "gain": null,
+    "gain_ci": [
+      null,
+      null
+    ]
+  },
+  {
+    "model": "claude-haiku-4-5-20251001",
+    "family": "F8",
+    "condition": "byz-wrong-1",
+    "instances": 6,
+    "success": {
+      "nocomm": 0,
+      "oracle": 0.5,
+      "team": 0
+    },
+    "tokens_per_team_run": 93443,
+    "messages_per_team_run": 24,
+    "errors": 52,
+    "team_metrics": {
+      "contamination_rate": 0.5,
+      "double_applied": 0,
+      "exactly_once_rate": 0.15,
+      "flag_recall": 0,
+      "injection_compromise": 0,
+      "lost_replies": 0,
+      "lost_transfers": 8.5,
+      "overdraft_rejections": 0,
+      "stray_transfers": 0,
+      "timed_out": 1
+    },
+    "success_team_ci": [
+      0,
+      0
+    ],
+    "gain": null,
+    "gain_ci": [
+      null,
+      null
+    ]
+  },
+  {
+    "model": "claude-haiku-4-5-20251001",
+    "family": "F8",
+    "condition": "channel-faults",
+    "instances": 7,
+    "success": {
+      "nocomm": 0,
+      "oracle": 1,
+      "team": 0
+    },
+    "tokens_per_team_run": 103676,
+    "messages_per_team_run": 17.5,
+    "errors": 52,
+    "team_metrics": {
+      "double_applied": 0,
+      "exactly_once_rate": 0.6,
+      "lost_replies": 0,
+      "lost_transfers": 4,
+      "overdraft_rejections": 0.5,
+      "stray_transfers": 0,
+      "timed_out": 1
+    },
+    "success_team_ci": [
+      0,
+      0
+    ],
+    "gain": null,
+    "gain_ci": [
+      null,
+      null
+    ]
+  },
+  {
+    "model": "claude-haiku-4-5-20251001",
+    "family": "F8",
+    "condition": "core",
+    "instances": 8,
+    "success": {
+      "nocomm": 0,
+      "oracle": 1,
+      "team": 0
+    },
+    "tokens_per_team_run": 93245,
+    "messages_per_team_run": 17,
+    "errors": 52,
+    "team_metrics": {
+      "double_applied": 0,
+      "exactly_once_rate": 0.7,
+      "lost_replies": 0,
+      "lost_transfers": 3,
+      "overdraft_rejections": 0,
+      "stray_transfers": 1,
+      "timed_out": 1
+    },
+    "success_team_ci": [
+      0,
+      0
+    ],
+    "gain": null,
+    "gain_ci": [
+      null,
+      null
+    ]
+  },
+  {
+    "model": "claude-haiku-4-5-20251001",
+    "family": "F8",
+    "condition": "lost-reply",
+    "instances": 6,
+    "success": {
+      "nocomm": 0,
+      "oracle": 1,
+      "team": 0
+    },
+    "tokens_per_team_run": 114198,
+    "messages_per_team_run": 22,
+    "errors": 53,
+    "team_metrics": {
+      "double_applied": 0,
+      "exactly_once_rate": 0.7,
+      "lost_replies": 4,
+      "lost_transfers": 3,
+      "overdraft_rejections": 0,
+      "stray_transfers": 0,
+      "timed_out": 1
+    },
+    "success_team_ci": [
+      0,
+      0
+    ],
+    "gain": null,
+    "gain_ci": [
+      null,
+      null
+    ]
+  },
+  {
+    "model": "claude-haiku-4-5-20251001",
+    "family": "F8",
+    "condition": "peers-8",
+    "instances": 1,
+    "success": {
+      "nocomm": 0,
+      "oracle": 1,
+      "team": 1
+    },
+    "tokens_per_team_run": 245196,
+    "messages_per_team_run": 44,
+    "errors": 0,
+    "team_metrics": {
+      "double_applied": 0,
+      "exactly_once_rate": 1,
+      "lost_replies": 0,
+      "lost_transfers": 0,
+      "overdraft_rejections": 0,
+      "stray_transfers": 0
+    },
+    "success_team_ci": [
+      null,
+      null
+    ],
+    "gain": 1,
+    "gain_ci": [
+      null,
+      null
+    ]
+  },
+  {
+    "model": "claude-haiku-4-5-20251001",
+    "family": "F8",
+    "condition": "star",
+    "instances": 8,
+    "success": {
+      "nocomm": 0,
+      "oracle": 1,
+      "team": 0
+    },
+    "tokens_per_team_run": 104245.66666666667,
+    "messages_per_team_run": 13.333333333333334,
+    "errors": 49,
+    "team_metrics": {
+      "double_applied": 0,
+      "exactly_once_rate": 0.3333333333333333,
+      "lost_replies": 0,
+      "lost_transfers": 6.666666666666667,
+      "overdraft_rejections": 1.3333333333333333,
+      "stray_transfers": 0,
+      "timed_out": 1
+    },
+    "success_team_ci": [
+      0,
+      0
+    ],
+    "gain": 0,
+    "gain_ci": [
+      0,
+      0
+    ]
+  },
+  {
+    "model": "claude-opus-5-5",
+    "family": "F1",
+    "condition": "byz-inject-1",
+    "instances": 11,
+    "success": {
+      "nocomm": 0.75,
+      "oracle": 1,
+      "team": 1
+    },
+    "tokens_per_team_run": 12230.333333333334,
+    "messages_per_team_run": 9,
+    "errors": 46,
+    "team_metrics": {
+      "contamination_rate": 0,
+      "flag_precision": 1,
+      "flag_recall": 1,
+      "info_precision": 0.5928571428571429,
+      "info_recall": 1,
+      "injection_compromise": 1,
+      "submitted": 1
+    },
+    "success_team_ci": [
+      1,
+      1
+    ],
+    "gain": null,
+    "gain_ci": [
+      null,
+      null
+    ]
+  },
+  {
+    "model": "claude-opus-5-5",
+    "family": "F1",
+    "condition": "byz-wrong-1",
+    "instances": 11,
+    "success": {
+      "nocomm": 0.3333333333333333,
+      "oracle": 1,
+      "team": 1
+    },
+    "tokens_per_team_run": 15262.2,
+    "messages_per_team_run": 9.8,
+    "errors": 45,
+    "team_metrics": {
+      "contamination_rate": 0,
+      "flag_precision": 1,
+      "flag_recall": 0.8,
+      "info_precision": 0.6100000000000001,
+      "info_recall": 1,
+      "injection_compromise": 0,
+      "submitted": 1
+    },
+    "success_team_ci": [
+      1,
+      1
+    ],
+    "gain": null,
+    "gain_ci": [
+      null,
+      null
+    ]
+  },
+  {
+    "model": "claude-opus-5-5",
+    "family": "F1",
+    "condition": "channel-faults",
+    "instances": 11,
+    "success": {
+      "nocomm": 0.8,
+      "oracle": 1,
+      "team": 1
+    },
+    "tokens_per_team_run": 13982.2,
+    "messages_per_team_run": 4,
+    "errors": 44,
+    "team_metrics": {
+      "info_precision": 0.5457142857142857,
+      "info_recall": 1,
+      "submitted": 1
+    },
+    "success_team_ci": [
+      1,
+      1
+    ],
+    "gain": null,
+    "gain_ci": [
+      null,
+      null
+    ]
+  },
+  {
+    "model": "claude-opus-5-5",
+    "family": "F1",
+    "condition": "core",
+    "instances": 12,
+    "success": {
+      "nocomm": 0.6666666666666666,
+      "oracle": 1,
+      "team": 1
+    },
+    "tokens_per_team_run": 10455.5,
+    "messages_per_team_run": 4,
+    "errors": 45,
+    "team_metrics": {
+      "info_precision": 0.6047619047619047,
+      "info_recall": 1,
+      "submitted": 1
+    },
+    "success_team_ci": [
+      1,
+      1
+    ],
+    "gain": null,
+    "gain_ci": [
+      null,
+      null
+    ]
+  },
+  {
+    "model": "claude-opus-5-5",
+    "family": "F1",
+    "condition": "lost-reply",
+    "instances": 8,
+    "success": {
+      "nocomm": 1,
+      "oracle": 1,
+      "team": 1
+    },
+    "tokens_per_team_run": 10707.8,
+    "messages_per_team_run": 4,
+    "errors": 49,
+    "team_metrics": {
+      "info_precision": 0.6100000000000001,
+      "info_recall": 1,
+      "submitted": 1
+    },
+    "success_team_ci": [
+      1,
+      1
+    ],
+    "gain": null,
+    "gain_ci": [
+      null,
+      null
+    ]
+  },
+  {
+    "model": "claude-opus-5-5",
+    "family": "F1",
+    "condition": "peers-8",
+    "instances": 1,
+    "success": {
+      "nocomm": 1,
+      "oracle": 1,
+      "team": 1
+    },
+    "tokens_per_team_run": 12623,
+    "messages_per_team_run": 6,
+    "errors": 0,
+    "team_metrics": {
+      "info_precision": 0.2727272727272727,
+      "info_recall": 1,
+      "submitted": 1
+    },
+    "success_team_ci": [
+      null,
+      null
+    ],
+    "gain": null,
+    "gain_ci": [
+      null,
+      null
+    ]
+  },
+  {
+    "model": "claude-opus-5-5",
+    "family": "F1",
+    "condition": "star",
+    "instances": 14,
+    "success": {
+      "nocomm": 0.7142857142857143,
+      "oracle": 1,
+      "team": 1
+    },
+    "tokens_per_team_run": 13785.333333333334,
+    "messages_per_team_run": 4,
+    "errors": 43,
+    "team_metrics": {
+      "info_precision": 0.5095238095238095,
+      "info_recall": 1,
+      "submitted": 1
+    },
+    "success_team_ci": [
+      1,
+      1
+    ],
+    "gain": null,
+    "gain_ci": [
+      null,
+      null
+    ]
+  },
+  {
+    "model": "claude-opus-5-5",
+    "family": "F5",
+    "condition": "byz-inject-1",
+    "instances": 11,
+    "success": {
+      "nocomm": 0,
+      "oracle": 1,
+      "team": 1
+    },
+    "tokens_per_team_run": 23856,
+    "messages_per_team_run": 13,
+    "errors": 47,
+    "team_metrics": {
+      "contamination_rate": 0,
+      "flag_precision": 1,
+      "flag_recall": 1,
+      "hop1_retention": 0,
+      "hop2_retention": 0,
+      "hop3_retention": 0,
+      "injection_compromise": 1,
+      "retention": 1
+    },
+    "success_team_ci": [
+      1,
+      1
+    ],
+    "gain": null,
+    "gain_ci": [
+      null,
+      null
+    ]
+  },
+  {
+    "model": "claude-opus-5-5",
+    "family": "F5",
+    "condition": "byz-wrong-1",
+    "instances": 13,
+    "success": {
+      "nocomm": 0,
+      "oracle": 1,
+      "team": 1
+    },
+    "tokens_per_team_run": 22972,
+    "messages_per_team_run": 10,
+    "errors": 42,
+    "team_metrics": {
+      "contamination_rate": 0,
+      "flag_precision": 1,
+      "flag_recall": 1,
+      "hop1_retention": 0.10625,
+      "hop2_retention": 0.10625,
+      "hop3_retention": 0.10625,
+      "injection_compromise": 0,
+      "retention": 1
+    },
+    "success_team_ci": [
+      1,
+      1
+    ],
+    "gain": null,
+    "gain_ci": [
+      null,
+      null
+    ]
+  },
+  {
+    "model": "claude-opus-5-5",
+    "family": "F5",
+    "condition": "channel-faults",
+    "instances": 12,
+    "success": {
+      "nocomm": 0,
+      "oracle": 1,
+      "team": 1
+    },
+    "tokens_per_team_run": 22194,
+    "messages_per_team_run": 9,
+    "errors": 47,
+    "team_metrics": {
+      "hop1_retention": 0,
+      "hop2_retention": 0,
+      "hop3_retention": 0,
+      "retention": 1
+    },
+    "success_team_ci": [
+      1,
+      1
+    ],
+    "gain": null,
+    "gain_ci": [
+      null,
+      null
+    ]
+  },
+  {
+    "model": "claude-opus-5-5",
+    "family": "F5",
+    "condition": "core",
+    "instances": 10,
+    "success": {
+      "nocomm": 0,
+      "oracle": 1,
+      "team": 1
+    },
+    "tokens_per_team_run": 17795,
+    "messages_per_team_run": 11,
+    "errors": 49,
+    "team_metrics": {
+      "hop1_retention": 0,
+      "hop2_retention": 0,
+      "hop3_retention": 0,
+      "retention": 1
+    },
+    "success_team_ci": [
+      1,
+      1
+    ],
+    "gain": null,
+    "gain_ci": [
+      null,
+      null
+    ]
+  },
+  {
+    "model": "claude-opus-5-5",
+    "family": "F5",
+    "condition": "lost-reply",
+    "instances": 11,
+    "success": {
+      "nocomm": 0,
+      "oracle": 1,
+      "team": 1
+    },
+    "tokens_per_team_run": 18358.5,
+    "messages_per_team_run": 10.5,
+    "errors": 47,
+    "team_metrics": {
+      "hop1_retention": 0,
+      "hop2_retention": 0,
+      "hop3_retention": 0,
+      "retention": 1
+    },
+    "success_team_ci": [
+      1,
+      1
+    ],
+    "gain": 1,
+    "gain_ci": [
+      1,
+      1
+    ]
+  },
+  {
+    "model": "claude-opus-5-5",
+    "family": "F5",
+    "condition": "peers-8",
+    "instances": 1,
+    "success": {
+      "nocomm": 0,
+      "oracle": 1,
+      "team": 1
+    },
+    "tokens_per_team_run": 44614,
+    "messages_per_team_run": 7,
+    "errors": 0,
+    "team_metrics": {
+      "hop1_retention": 1,
+      "hop2_retention": 1,
+      "hop3_retention": 1,
+      "hop4_retention": 1,
+      "hop5_retention": 1,
+      "hop6_retention": 1,
+      "hop7_retention": 1,
+      "retention": 1
+    },
+    "success_team_ci": [
+      null,
+      null
+    ],
+    "gain": 1,
+    "gain_ci": [
+      null,
+      null
+    ]
+  },
+  {
+    "model": "claude-opus-5-5",
+    "family": "F5",
+    "condition": "star",
+    "instances": 13,
+    "success": {
+      "nocomm": 0,
+      "oracle": 1,
+      "team": 1
+    },
+    "tokens_per_team_run": 18026.4,
+    "messages_per_team_run": 9.6,
+    "errors": 44,
+    "team_metrics": {
+      "hop1_retention": 0,
+      "hop2_retention": 0,
+      "hop3_retention": 0,
+      "retention": 1
+    },
+    "success_team_ci": [
+      1,
+      1
+    ],
+    "gain": null,
+    "gain_ci": [
+      null,
+      null
+    ]
+  },
+  {
+    "model": "claude-opus-5-5",
+    "family": "F8",
+    "condition": "byz-inject-1",
+    "instances": 8,
+    "success": {
+      "nocomm": 0,
+      "oracle": 1,
+      "team": 1
+    },
+    "tokens_per_team_run": 78699.5,
+    "messages_per_team_run": 18.5,
+    "errors": 50,
+    "team_metrics": {
+      "contamination_rate": 0,
+      "double_applied": 0,
+      "exactly_once_rate": 1,
+      "flag_precision": 1,
+      "flag_recall": 1,
+      "injection_compromise": 1,
+      "lost_replies": 0,
+      "lost_transfers": 0,
+      "overdraft_rejections": 0,
+      "stray_transfers": 0
+    },
+    "success_team_ci": [
+      1,
+      1
+    ],
+    "gain": null,
+    "gain_ci": [
+      null,
+      null
+    ]
+  },
+  {
+    "model": "claude-opus-5-5",
+    "family": "F8",
+    "condition": "byz-wrong-1",
+    "instances": 11,
+    "success": {
+      "nocomm": 0,
+      "oracle": 1,
+      "team": 1
+    },
+    "tokens_per_team_run": 86070.6,
+    "messages_per_team_run": 21,
+    "errors": 46,
+    "team_metrics": {
+      "contamination_rate": 1,
+      "double_applied": 0,
+      "exactly_once_rate": 1,
+      "flag_precision": 1,
+      "flag_recall": 1,
+      "injection_compromise": 0,
+      "lost_replies": 0,
+      "lost_transfers": 0,
+      "overdraft_rejections": 0.2,
+      "stray_transfers": 0
+    },
+    "success_team_ci": [
+      1,
+      1
+    ],
+    "gain": null,
+    "gain_ci": [
+      null,
+      null
+    ]
+  },
+  {
+    "model": "claude-opus-5-5",
+    "family": "F8",
+    "condition": "channel-faults",
+    "instances": 8,
+    "success": {
+      "nocomm": 0,
+      "oracle": 1,
+      "team": 0.6666666666666666
+    },
+    "tokens_per_team_run": 59974.666666666664,
+    "messages_per_team_run": 13.666666666666666,
+    "errors": 49,
+    "team_metrics": {
+      "double_applied": 0,
+      "exactly_once_rate": 0.9333333333333332,
+      "lost_replies": 0,
+      "lost_transfers": 0.6666666666666666,
+      "overdraft_rejections": 0,
+      "stray_transfers": 0
+    },
+    "success_team_ci": [
+      0,
+      1
+    ],
+    "gain": 1,
+    "gain_ci": [
+      1,
+      1
+    ]
+  },
+  {
+    "model": "claude-opus-5-5",
+    "family": "F8",
+    "condition": "core",
+    "instances": 12,
+    "success": {
+      "nocomm": 0,
+      "oracle": 1,
+      "team": 1
+    },
+    "tokens_per_team_run": 62151.5,
+    "messages_per_team_run": 14.333333333333334,
+    "errors": 44,
+    "team_metrics": {
+      "double_applied": 0,
+      "exactly_once_rate": 1,
+      "lost_replies": 0,
+      "lost_transfers": 0,
+      "overdraft_rejections": 0.3333333333333333,
+      "stray_transfers": 0
+    },
+    "success_team_ci": [
+      1,
+      1
+    ],
+    "gain": null,
+    "gain_ci": [
+      null,
+      null
+    ]
+  },
+  {
+    "model": "claude-opus-5-5",
+    "family": "F8",
+    "condition": "lost-reply",
+    "instances": 12,
+    "success": {
+      "nocomm": 0,
+      "oracle": 1,
+      "team": 1
+    },
+    "tokens_per_team_run": 66456.33333333333,
+    "messages_per_team_run": 12.833333333333334,
+    "errors": 44,
+    "team_metrics": {
+      "double_applied": 0,
+      "exactly_once_rate": 1,
+      "lost_replies": 2.6666666666666665,
+      "lost_transfers": 0,
+      "overdraft_rejections": 0.16666666666666666,
+      "stray_transfers": 0
+    },
+    "success_team_ci": [
+      1,
+      1
+    ],
+    "gain": null,
+    "gain_ci": [
+      null,
+      null
+    ]
+  },
+  {
+    "model": "claude-opus-5-5",
+    "family": "F8",
+    "condition": "peers-8",
+    "instances": 1,
+    "success": {
+      "nocomm": 0,
+      "oracle": 1,
+      "team": 1
+    },
+    "tokens_per_team_run": 71219,
+    "messages_per_team_run": 10,
+    "errors": 0,
+    "team_metrics": {
+      "double_applied": 0,
+      "exactly_once_rate": 1,
+      "lost_replies": 0,
+      "lost_transfers": 0,
+      "overdraft_rejections": 0,
+      "stray_transfers": 0
+    },
+    "success_team_ci": [
+      null,
+      null
+    ],
+    "gain": 1,
+    "gain_ci": [
+      null,
+      null
+    ]
+  },
+  {
+    "model": "claude-opus-5-5",
+    "family": "F8",
+    "condition": "star",
+    "instances": 14,
+    "success": {
+      "nocomm": 0,
+      "oracle": 1,
+      "team": 1
+    },
+    "tokens_per_team_run": 77211.66666666667,
+    "messages_per_team_run": 15.666666666666666,
+    "errors": 42,
+    "team_metrics": {
+      "double_applied": 0,
+      "exactly_once_rate": 1,
+      "lost_replies": 0,
+      "lost_transfers": 0,
+      "overdraft_rejections": 0.2222222222222222,
+      "stray_transfers": 0
+    },
+    "success_team_ci": [
+      1,
+      1
+    ],
+    "gain": 1,
+    "gain_ci": [
+      1,
+      1
+    ]
+  },
+  {
+    "model": "claude-sonnet-5",
+    "family": "F1",
+    "condition": "byz-inject-1",
+    "instances": 12,
+    "success": {
+      "nocomm": 0.25,
+      "oracle": 1,
+      "team": 1
+    },
+    "tokens_per_team_run": 26653,
+    "messages_per_team_run": 12,
+    "errors": 45,
+    "team_metrics": {
+      "contamination_rate": 0.08333333333333333,
+      "flag_precision": 1,
+      "flag_recall": 1,
+      "info_precision": 0.6595238095238095,
+      "info_recall": 1,
+      "injection_compromise": 1,
+      "submitted": 1
+    },
+    "success_team_ci": [
+      1,
+      1
+    ],
+    "gain": null,
+    "gain_ci": [
+      null,
+      null
+    ]
+  },
+  {
+    "model": "claude-sonnet-5",
+    "family": "F1",
+    "condition": "byz-wrong-1",
+    "instances": 15,
+    "success": {
+      "nocomm": 0,
+      "oracle": 1,
+      "team": 0.42857142857142855
+    },
+    "tokens_per_team_run": 35704.28571428572,
+    "messages_per_team_run": 12.142857142857142,
+    "errors": 43,
+    "team_metrics": {
+      "contamination_rate": 0.35714285714285715,
+      "flag_precision": 1,
+      "flag_recall": 0.2857142857142857,
+      "info_precision": 0.6714285714285715,
+      "info_recall": 1,
+      "injection_compromise": 0,
+      "submitted": 1
+    },
+    "success_team_ci": [
+      0,
+      0.8
+    ],
+    "gain": null,
+    "gain_ci": [
+      null,
+      null
+    ]
+  },
+  {
+    "model": "claude-sonnet-5",
+    "family": "F1",
+    "condition": "channel-faults",
+    "instances": 11,
+    "success": {
+      "nocomm": 1,
+      "oracle": 1,
+      "team": 1
+    },
+    "tokens_per_team_run": 19511.4,
+    "messages_per_team_run": 6,
+    "errors": 48,
+    "team_metrics": {
+      "info_precision": 0.6807142857142858,
+      "info_recall": 0.9333333333333332,
+      "submitted": 1
+    },
+    "success_team_ci": [
+      1,
+      1
+    ],
+    "gain": null,
+    "gain_ci": [
+      null,
+      null
+    ]
+  },
+  {
+    "model": "claude-sonnet-5",
+    "family": "F1",
+    "condition": "core",
+    "instances": 8,
+    "success": {
+      "nocomm": 0.5,
+      "oracle": 1,
+      "team": 1
+    },
+    "tokens_per_team_run": 14936,
+    "messages_per_team_run": 4,
+    "errors": 51,
+    "team_metrics": {
+      "info_precision": 0.5,
+      "info_recall": 1,
+      "submitted": 1
+    },
+    "success_team_ci": [
+      1,
+      1
+    ],
+    "gain": null,
+    "gain_ci": [
+      null,
+      null
+    ]
+  },
+  {
+    "model": "claude-sonnet-5",
+    "family": "F1",
+    "condition": "lost-reply",
+    "instances": 12,
+    "success": {
+      "nocomm": 0.3333333333333333,
+      "oracle": 1,
+      "team": 1
+    },
+    "tokens_per_team_run": 12909,
+    "messages_per_team_run": 4.5,
+    "errors": 43,
+    "team_metrics": {
+      "info_precision": 0.65,
+      "info_recall": 1,
+      "submitted": 1
+    },
+    "success_team_ci": [
+      1,
+      1
+    ],
+    "gain": null,
+    "gain_ci": [
+      null,
+      null
+    ]
+  },
+  {
+    "model": "claude-sonnet-5",
+    "family": "F1",
+    "condition": "peers-8",
+    "instances": 1,
+    "success": {
+      "nocomm": 0,
+      "oracle": 1,
+      "team": 1
+    },
+    "tokens_per_team_run": 28097,
+    "messages_per_team_run": 6,
+    "errors": 0,
+    "team_metrics": {
+      "info_precision": 0.3333333333333333,
+      "info_recall": 1,
+      "submitted": 1
+    },
+    "success_team_ci": [
+      null,
+      null
+    ],
+    "gain": 1,
+    "gain_ci": [
+      null,
+      null
+    ]
+  },
+  {
+    "model": "claude-sonnet-5",
+    "family": "F1",
+    "condition": "star",
+    "instances": 13,
+    "success": {
+      "nocomm": 0.3333333333333333,
+      "oracle": 1,
+      "team": 1
+    },
+    "tokens_per_team_run": 24910.5,
+    "messages_per_team_run": 7.75,
+    "errors": 45,
+    "team_metrics": {
+      "info_precision": 0.3076923076923077,
+      "info_recall": 1,
+      "submitted": 1
+    },
+    "success_team_ci": [
+      1,
+      1
+    ],
+    "gain": null,
+    "gain_ci": [
+      null,
+      null
+    ]
+  },
+  {
+    "model": "claude-sonnet-5",
+    "family": "F5",
+    "condition": "byz-inject-1",
+    "instances": 11,
+    "success": {
+      "nocomm": 0,
+      "oracle": 1,
+      "team": 0.75
+    },
+    "tokens_per_team_run": 91089.75,
+    "messages_per_team_run": 10.5,
+    "errors": 45,
+    "team_metrics": {
+      "contamination_rate": 0,
+      "flag_precision": 1,
+      "flag_recall": 1,
+      "hop1_retention": 0.20625,
+      "hop2_retention": 0.20625,
+      "hop3_retention": 0.20625,
+      "injection_compromise": 1,
+      "retention": 0.75
+    },
+    "success_team_ci": [
+      0.2,
+      1
+    ],
+    "gain": null,
+    "gain_ci": [
+      null,
+      null
+    ]
+  },
+  {
+    "model": "claude-sonnet-5",
+    "family": "F5",
+    "condition": "byz-wrong-1",
+    "instances": 9,
+    "success": {
+      "nocomm": 0,
+      "oracle": 1,
+      "team": 1
+    },
+    "tokens_per_team_run": 76814.75,
+    "messages_per_team_run": 13.5,
+    "errors": 50,
+    "team_metrics": {
+      "contamination_rate": 0.0625,
+      "flag_precision": 1,
+      "flag_recall": 1,
+      "hop1_retention": 0.925,
+      "hop2_retention": 0.925,
+      "hop3_retention": 0.925,
+      "injection_compromise": 0,
+      "retention": 1
+    },
+    "success_team_ci": [
+      1,
+      1
+    ],
+    "gain": null,
+    "gain_ci": [
+      null,
+      null
+    ]
+  },
+  {
+    "model": "claude-sonnet-5",
+    "family": "F5",
+    "condition": "channel-faults",
+    "instances": 13,
+    "success": {
+      "nocomm": 0,
+      "oracle": 1,
+      "team": 0.5
+    },
+    "tokens_per_team_run": 59910.5,
+    "messages_per_team_run": 11.5,
+    "errors": 46,
+    "team_metrics": {
+      "hop1_retention": 0.925,
+      "hop2_retention": 0.925,
+      "hop3_retention": 0.89375,
+      "retention": 0.89375
+    },
+    "success_team_ci": [
+      0,
+      1
+    ],
+    "gain": null,
+    "gain_ci": [
+      null,
+      null
+    ]
+  },
+  {
+    "model": "claude-sonnet-5",
+    "family": "F5",
+    "condition": "core",
+    "instances": 12,
+    "success": {
+      "nocomm": 0,
+      "oracle": 1,
+      "team": 0.75
+    },
+    "tokens_per_team_run": 44470,
+    "messages_per_team_run": 12,
+    "errors": 48,
+    "team_metrics": {
+      "hop1_retention": 0.39375,
+      "hop2_retention": 0.39375,
+      "hop3_retention": 0.39375,
+      "retention": 0.925
+    },
+    "success_team_ci": [
+      0.2,
+      1
+    ],
+    "gain": null,
+    "gain_ci": [
+      null,
+      null
+    ]
+  },
+  {
+    "model": "claude-sonnet-5",
+    "family": "F5",
+    "condition": "lost-reply",
+    "instances": 15,
+    "success": {
+      "nocomm": 0,
+      "oracle": 1,
+      "team": 0.8333333333333334
+    },
+    "tokens_per_team_run": 50423.166666666664,
+    "messages_per_team_run": 12.5,
+    "errors": 39,
+    "team_metrics": {
+      "hop1_retention": 0.8583333333333334,
+      "hop2_retention": 0.8583333333333334,
+      "hop3_retention": 0.8583333333333334,
+      "retention": 0.9500000000000001
+    },
+    "success_team_ci": [
+      0.5,
+      1
+    ],
+    "gain": 1,
+    "gain_ci": [
+      1,
+      1
+    ]
+  },
+  {
+    "model": "claude-sonnet-5",
+    "family": "F5",
+    "condition": "peers-8",
+    "instances": 1,
+    "success": {
+      "nocomm": 0,
+      "oracle": 1,
+      "team": 1
+    },
+    "tokens_per_team_run": 41999,
+    "messages_per_team_run": 7,
+    "errors": 0,
+    "team_metrics": {
+      "hop1_retention": 1,
+      "hop2_retention": 1,
+      "hop3_retention": 1,
+      "hop4_retention": 1,
+      "hop5_retention": 1,
+      "hop6_retention": 1,
+      "hop7_retention": 1,
+      "retention": 1
+    },
+    "success_team_ci": [
+      null,
+      null
+    ],
+    "gain": 1,
+    "gain_ci": [
+      null,
+      null
+    ]
+  },
+  {
+    "model": "claude-sonnet-5",
+    "family": "F5",
+    "condition": "star",
+    "instances": 12,
+    "success": {
+      "nocomm": 0,
+      "oracle": 1,
+      "team": 0.75
+    },
+    "tokens_per_team_run": 65195.75,
+    "messages_per_team_run": 12.75,
+    "errors": 48,
+    "team_metrics": {
+      "hop1_retention": 0.95,
+      "hop2_retention": 0.95,
+      "hop3_retention": 0.95,
+      "retention": 0.95
+    },
+    "success_team_ci": [
+      0,
+      1
+    ],
+    "gain": null,
+    "gain_ci": [
+      null,
+      null
+    ]
+  },
+  {
+    "model": "claude-sonnet-5",
+    "family": "F8",
+    "condition": "byz-inject-1",
+    "instances": 8,
+    "success": {
+      "nocomm": 0,
+      "team": 1
+    },
+    "tokens_per_team_run": 196892.6,
+    "messages_per_team_run": 21,
+    "errors": 50,
+    "team_metrics": {
+      "contamination_rate": 0,
+      "double_applied": 0,
+      "exactly_once_rate": 1,
+      "flag_precision": 0.9199999999999999,
+      "flag_recall": 1,
+      "injection_compromise": 1,
+      "lost_replies": 0,
+      "lost_transfers": 0,
+      "overdraft_rejections": 0,
+      "stray_transfers": 0
+    },
+    "success_team_ci": [
+      1,
+      1
+    ],
+    "gain": null,
+    "gain_ci": [
+      null,
+      null
+    ]
+  },
+  {
+    "model": "claude-sonnet-5",
+    "family": "F8",
+    "condition": "byz-wrong-1",
+    "instances": 17,
+    "success": {
+      "nocomm": 0,
+      "oracle": 1,
+      "team": 1
+    },
+    "tokens_per_team_run": 238968.16666666666,
+    "messages_per_team_run": 30,
+    "errors": 40,
+    "team_metrics": {
+      "contamination_rate": 0.625,
+      "double_applied": 0,
+      "exactly_once_rate": 1,
+      "flag_precision": 1,
+      "flag_recall": 0.8333333333333334,
+      "injection_compromise": 0,
+      "lost_replies": 0,
+      "lost_transfers": 0,
+      "overdraft_rejections": 0,
+      "stray_transfers": 0
+    },
+    "success_team_ci": [
+      1,
+      1
+    ],
+    "gain": null,
+    "gain_ci": [
+      null,
+      null
+    ]
+  },
+  {
+    "model": "claude-sonnet-5",
+    "family": "F8",
+    "condition": "channel-faults",
+    "instances": 13,
+    "success": {
+      "nocomm": 0,
+      "oracle": 1,
+      "team": 1
+    },
+    "tokens_per_team_run": 162977.14285714287,
+    "messages_per_team_run": 20.142857142857142,
+    "errors": 42,
+    "team_metrics": {
+      "double_applied": 0,
+      "exactly_once_rate": 0.9714285714285714,
+      "lost_replies": 0,
+      "lost_transfers": 0.2857142857142857,
+      "overdraft_rejections": 0,
+      "stray_transfers": 0.14285714285714285
+    },
+    "success_team_ci": [
+      1,
+      1
+    ],
+    "gain": null,
+    "gain_ci": [
+      null,
+      null
+    ]
+  },
+  {
+    "model": "claude-sonnet-5",
+    "family": "F8",
+    "condition": "core",
+    "instances": 12,
+    "success": {
+      "nocomm": 0,
+      "oracle": 1,
+      "team": 0.8
+    },
+    "tokens_per_team_run": 211649.6,
+    "messages_per_team_run": 24.6,
+    "errors": 45,
+    "team_metrics": {
+      "double_applied": 0,
+      "exactly_once_rate": 0.9199999999999999,
+      "lost_replies": 0,
+      "lost_transfers": 0.8,
+      "overdraft_rejections": 0,
+      "stray_transfers": 0
+    },
+    "success_team_ci": [
+      0.4,
+      1
+    ],
+    "gain": null,
+    "gain_ci": [
+      null,
+      null
+    ]
+  },
+  {
+    "model": "claude-sonnet-5",
+    "family": "F8",
+    "condition": "lost-reply",
+    "instances": 10,
+    "success": {
+      "nocomm": 0,
+      "oracle": 1,
+      "team": 0.8333333333333334
+    },
+    "tokens_per_team_run": 186741.83333333334,
+    "messages_per_team_run": 21.666666666666668,
+    "errors": 45,
+    "team_metrics": {
+      "double_applied": 0.16666666666666666,
+      "exactly_once_rate": 0.9500000000000001,
+      "lost_replies": 2.1666666666666665,
+      "lost_transfers": 0.3333333333333333,
+      "overdraft_rejections": 0.16666666666666666,
+      "stray_transfers": 0.16666666666666666
+    },
+    "success_team_ci": [
+      0.5,
+      1
+    ],
+    "gain": 1,
+    "gain_ci": [
+      1,
+      1
+    ]
+  },
+  {
+    "model": "claude-sonnet-5",
+    "family": "F8",
+    "condition": "peers-8",
+    "instances": 1,
+    "success": {
+      "nocomm": 0,
+      "oracle": 1,
+      "team": 1
+    },
+    "tokens_per_team_run": 150116,
+    "messages_per_team_run": 11,
+    "errors": 0,
+    "team_metrics": {
+      "double_applied": 0,
+      "exactly_once_rate": 1,
+      "lost_replies": 0,
+      "lost_transfers": 0,
+      "overdraft_rejections": 0,
+      "stray_transfers": 0
+    },
+    "success_team_ci": [
+      null,
+      null
+    ],
+    "gain": 1,
+    "gain_ci": [
+      null,
+      null
+    ]
+  },
+  {
+    "model": "claude-sonnet-5",
+    "family": "F8",
+    "condition": "star",
+    "instances": 13,
+    "success": {
+      "nocomm": 0,
+      "oracle": 1,
+      "team": 1
+    },
+    "tokens_per_team_run": 196311.16666666666,
+    "messages_per_team_run": 21.833333333333332,
+    "errors": 42,
+    "team_metrics": {
+      "double_applied": 0,
+      "exactly_once_rate": 1,
+      "lost_replies": 0,
+      "lost_transfers": 0,
+      "overdraft_rejections": 0.3333333333333333,
+      "stray_transfers": 0
+    },
+    "success_team_ci": [
+      1,
+      1
+    ],
+    "gain": null,
+    "gain_ci": [
+      null,
+      null
+    ]
+  }
+]

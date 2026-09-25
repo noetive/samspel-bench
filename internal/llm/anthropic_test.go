@@ -105,3 +105,28 @@ func TestBucketRate(t *testing.T) {
 		t.Fatalf("600 burst + 5 more should wait ~0.5s, took %s", d)
 	}
 }
+
+// A key that is not scoped to a workspace is refused unless every request
+// names one, and a scoped key must not carry a workspace it was not given.
+func TestClientSendsWorkspaceOnlyWhenSet(t *testing.T) {
+	for _, ws := range []string{"", "wrkspc_test"} {
+		var got atomic.Value
+		srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			got.Store(r.Header.Values("anthropic-workspace-id"))
+			_, _ = w.Write([]byte(`{"content":[{"type":"text","text":"ok"}],"stop_reason":"end_turn","usage":{}}`))
+		}))
+		c := NewClient("k", srv.URL, NewLimiterSet(Limits{MaxInflight: 1, RPM: 600, ITPM: 100000, OTPM: 100000}, nil), 1)
+		c.WorkspaceID = ws
+		if _, err := c.Complete(context.Background(), Request{Model: "m", Messages: []Message{{Role: "user", Content: []Block{Text("hi")}}}, MaxTokens: 10}); err != nil {
+			t.Fatal(err)
+		}
+		srv.Close()
+		vals := got.Load().([]string)
+		if ws == "" && len(vals) != 0 {
+			t.Errorf("header sent without a workspace: %v", vals)
+		}
+		if ws != "" && (len(vals) != 1 || vals[0] != ws) {
+			t.Errorf("header = %v, want [%s]", vals, ws)
+		}
+	}
+}

@@ -22,11 +22,14 @@ const apiVersion = "2023-06-01"
 // Client calls the Anthropic Messages API. It is safe for concurrent use and
 // is shared by every agent in every parallel run.
 type Client struct {
-	APIKey     string
-	BaseURL    string
-	HTTP       *http.Client
-	Limiters   *LimiterSet
-	MaxRetries int
+	APIKey  string
+	BaseURL string
+	// WorkspaceID selects the workspace for a key that is not scoped to one;
+	// the API refuses such a key without it. Empty sends no header.
+	WorkspaceID string
+	HTTP        *http.Client
+	Limiters    *LimiterSet
+	MaxRetries  int
 
 	Requests   atomic.Int64
 	Throttled  atomic.Int64 // 429
@@ -169,6 +172,9 @@ func (c *Client) post(ctx context.Context, payload []byte) (*Response, http.Head
 	hreq.Header.Set("x-api-key", c.APIKey)
 	hreq.Header.Set("anthropic-version", apiVersion)
 	hreq.Header.Set("content-type", "application/json")
+	if c.WorkspaceID != "" {
+		hreq.Header.Set("anthropic-workspace-id", c.WorkspaceID)
+	}
 	hresp, err := c.HTTP.Do(hreq)
 	if err != nil {
 		return nil, nil, err

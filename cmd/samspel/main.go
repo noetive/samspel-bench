@@ -41,7 +41,7 @@ var version = "dev"
 const usage = `usage: samspel <subcommand> [flags]
 
 subcommands:
-  run       -config FILE -out DIR [-parallel N] [-mock] [-traces] [-max-jobs N] [-dry-run]
+  run       -config FILE -out DIR [-parallel N] [-mock] [-traces] [-max-jobs N] [-spool DIR] [-dry-run]
   report    -in DIR
   list      print task families, controls and adversary scripts
   version   print the build version
@@ -111,6 +111,7 @@ func cmdRun(args []string, stdout, stderr io.Writer) error {
 	mockLatency := fs.Duration("mock-latency", 5*time.Millisecond, "simulated model latency in mock mode")
 	traces := fs.Bool("traces", false, "write one JSONL trace per run")
 	maxJobs := fs.Int("max-jobs", 0, "run at most N pending jobs (smoke testing)")
+	spool := fs.String("spool", "", "carry each run's messages through a JSONL file in this directory instead of memory")
 	dry := fs.Bool("dry-run", false, "print the job count and exit")
 	if err := parseFlags(fs, args, stderr); err != nil {
 		return err
@@ -130,7 +131,7 @@ func cmdRun(args []string, stdout, stderr io.Writer) error {
 		return err
 	}
 
-	opts := runner.Options{Out: *out, Parallel: cfg.Parallel, Mock: *mock, MockLatency: *mockLatency, Traces: *traces, MaxJobs: *maxJobs, Log: slog.New(slog.NewTextHandler(stderr, nil))}
+	opts := runner.Options{Out: *out, Parallel: cfg.Parallel, Mock: *mock, MockLatency: *mockLatency, Traces: *traces, MaxJobs: *maxJobs, SpoolDir: *spool, Log: slog.New(slog.NewTextHandler(stderr, nil))}
 	var client *llm.Client
 	if !*mock {
 		key := os.Getenv("ANTHROPIC_API_KEY")
@@ -139,6 +140,7 @@ func cmdRun(args []string, stdout, stderr io.Writer) error {
 		}
 		lim := llm.NewLimiterSet(cfg.Limits, cfg.ModelLimits)
 		client = llm.NewClient(key, os.Getenv("ANTHROPIC_BASE_URL"), lim, cfg.Limits.MaxInflight)
+		client.WorkspaceID = os.Getenv("ANTHROPIC_WORKSPACE_ID")
 		opts.Model = client
 	}
 	if err := os.MkdirAll(*out, 0o755); err != nil {

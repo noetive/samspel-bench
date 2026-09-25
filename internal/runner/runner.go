@@ -54,6 +54,7 @@ type Options struct {
 	MockLatency time.Duration
 	Traces      bool
 	MaxJobs     int
+	SpoolDir    string    // when set, each run's messages travel through DIR/<job>.jsonl
 	Model       llm.Model // shared client for real runs
 	Log         *slog.Logger
 }
@@ -75,6 +76,11 @@ func (r *Runner) Run(ctx context.Context) (err error) {
 	}
 	if r.opts.Traces {
 		if err := os.MkdirAll(filepath.Join(r.opts.Out, "traces"), 0o755); err != nil {
+			return err
+		}
+	}
+	if r.opts.SpoolDir != "" {
+		if err := os.MkdirAll(r.opts.SpoolDir, 0o755); err != nil {
 			return err
 		}
 	}
@@ -288,6 +294,19 @@ func (r *Runner) RunJob(ctx context.Context, j Job) (res Result) {
 		bcfg.CanBroadcast = func(from string) bool { return from == hub }
 		topoLine = fmt.Sprintf("Topology: star. %s is the hub. Other agents can only message the hub, and only the hub can broadcast.\n", hub)
 	}
+	if r.opts.SpoolDir != "" {
+		spool, err := bus.OpenSpool(filepath.Join(r.opts.SpoolDir, j.ID+".jsonl"))
+		if err != nil {
+			res.Error = err.Error()
+			return res
+		}
+		defer func() {
+			if err := spool.Close(); err != nil && res.Error == "" {
+				res.Error = err.Error()
+			}
+		}()
+		bcfg.Carrier = spool
+	}
 	b := bus.New(bcfg, roster, runSeed, tr)
 
 	env := inst.NewEnv(task.EnvConfig{Decision: cond.Decision, LostReply: cond.Channel.LostReply, Oracle: j.Control == "oracle", Seed: runSeed})
@@ -363,6 +382,9 @@ func (r *Runner) RunJob(ctx context.Context, j Job) (res Result) {
 		if st.Err != "" && res.Error == "" {
 			res.Error = id + ": " + st.Err
 		}
+	}
+	if err := b.Err(); err != nil && res.Error == "" {
+		res.Error = "message transport: " + err.Error()
 	}
 	if ctx.Err() == nil && rctx.Err() == context.DeadlineExceeded {
 		res.Metrics["timed_out"] = 1

@@ -75,3 +75,45 @@ func TestMockEndToEnd(t *testing.T) {
 		}
 	}
 }
+
+// A run carried over the spool must behave like one carried in memory: the
+// mock team still succeeds on core, and every communicating run leaves its
+// message file behind for inspection.
+func TestMockRunOverSpool(t *testing.T) {
+	dir, spool := t.TempDir(), t.TempDir()
+	cfg := &Config{
+		Models: []string{"mock"}, Seed: 5,
+		Families:   []FamilySpec{{Name: "F1", Instances: 4}, {Name: "F8", Instances: 4}},
+		Conditions: []Condition{{Name: "core"}},
+		Controls:   []string{"team", "nocomm"},
+		Agent:      AgentSpec{WaitTimeoutSec: 2, RunTimeoutSec: 30},
+	}
+	cfg.defaults()
+	if err := cfg.validate(); err != nil {
+		t.Fatal(err)
+	}
+	opts := Options{Out: dir, Parallel: 8, Mock: true, MockLatency: time.Millisecond, SpoolDir: spool, Log: slog.New(slog.DiscardHandler)}
+	if err := New(cfg, opts).Run(context.Background()); err != nil {
+		t.Fatal(err)
+	}
+	teams := 0
+	for _, x := range readResults(t, filepath.Join(dir, "results.jsonl")) {
+		if x.Error != "" {
+			t.Fatalf("%s: %s", x.JobID, x.Error)
+		}
+		if x.Control != "team" {
+			continue
+		}
+		teams++
+		if !x.Success {
+			t.Errorf("%s %s team failed over the spool", x.Family, x.JobID)
+		}
+		b, err := os.ReadFile(filepath.Join(spool, x.JobID+".jsonl"))
+		if err != nil || len(b) == 0 {
+			t.Errorf("%s: no messages in spool file (err %v)", x.JobID, err)
+		}
+	}
+	if teams != 8 {
+		t.Fatalf("%d team runs, want 8", teams)
+	}
+}

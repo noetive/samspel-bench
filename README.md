@@ -22,7 +22,7 @@ bin/samspel run -config configs/core.json -out results/core -dry-run    # job co
 bin/samspel report -in results/core                                     # rebuild the report from results.jsonl
 ```
 
-`ANTHROPIC_BASE_URL` overrides the endpoint (proxy or gateway). Ctrl-C stops cleanly. Rerunning the same command resumes: every job already in `results.jsonl` is skipped. A run that cannot write its results fails instead of reporting jobs done.
+`ANTHROPIC_BASE_URL` overrides the endpoint (proxy or gateway). `ANTHROPIC_WORKSPACE_ID` names the workspace for a key that is not scoped to one. `-spool DIR` carries each run's messages through a JSONL file in DIR instead of memory; the file is what agents receive, so it can be read or tailed during a run. Ctrl-C stops cleanly. Rerunning the same command resumes: every job already in `results.jsonl` is skipped. A run that cannot write its results fails instead of reporting jobs done.
 
 Exit status is 0 on success, 1 when a run fails, and 2 when the invocation is wrong (unknown subcommand or flag).
 

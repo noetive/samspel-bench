@@ -26,6 +26,30 @@ type Config struct {
 	Ablate           bool                       // replace content with length-matched noise
 	BudgetTokens     int                        // per-agent total of sent message tokens; 0 is unlimited
 	MaxMessageTokens int                        // per-message cap; 0 is unlimited
+	Carrier          Carrier                    // holds delivered messages until drained; nil keeps them in memory
+}
+
+// Carrier holds delivered messages until their recipient drains them. The bus
+// calls it with its lock held, so an implementation need not be safe for
+// concurrent use.
+type Carrier interface {
+	Deliver(m Message) error
+	// Collect returns and forgets every message held for an agent, in
+	// delivery order.
+	Collect(to string) ([]Message, error)
+	// Holds reports that an agent has messages it has not collected.
+	Holds(to string) bool
+}
+
+// pigeonholes is the in-memory carrier.
+type pigeonholes map[string][]Message
+
+func (p pigeonholes) Deliver(m Message) error { p[m.To] = append(p[m.To], m); return nil }
+func (p pigeonholes) Holds(to string) bool    { return len(p[to]) > 0 }
+func (p pigeonholes) Collect(to string) ([]Message, error) {
+	m := p[to]
+	delete(p, to)
+	return m, nil
 }
 
 // Message is one delivered message.
@@ -43,7 +67,8 @@ type Bus struct {
 	rng     *rand.Rand
 	agents  map[string]bool
 	order   []string
-	inbox   map[string][]Message
+	mail    Carrier
+	err     error // first carrier failure; the run cannot be trusted after it
 	notify  map[string]chan struct{}
 	active  map[string]bool
 	waiting map[string]bool
@@ -57,8 +82,11 @@ type Bus struct {
 func New(cfg Config, agents []string, seed uint64, tr *trace.Trace) *Bus {
 	b := &Bus{
 		cfg: cfg, tr: tr, rng: rand.New(rand.NewPCG(seed, 0xb5ad4eceda1ce2a9)),
-		agents: map[string]bool{}, inbox: map[string][]Message{}, notify: map[string]chan struct{}{},
+		agents: map[string]bool{}, mail: cfg.Carrier, notify: map[string]chan struct{}{},
 		active: map[string]bool{}, waiting: map[string]bool{}, quiet: map[string]bool{}, sent: map[string]int{},
+	}
+	if b.mail == nil {
+		b.mail = pigeonholes{}
 	}
 	for _, a := range agents {
 		b.agents[a] = true
@@ -203,7 +231,10 @@ func (b *Bus) route(m Message) {
 
 // put places a message in an inbox. Lock held.
 func (b *Bus) put(m Message) {
-	b.inbox[m.To] = append(b.inbox[m.To], m)
+	if err := b.mail.Deliver(m); err != nil {
+		b.fail(err)
+		return
+	}
 	b.tr.Add(trace.Event{Kind: "deliver", Agent: m.From, To: m.To, MsgID: m.ID})
 	b.signal(m.To)
 }
@@ -225,9 +256,26 @@ func (b *Bus) Drain(a string) []Message {
 }
 
 func (b *Bus) drainLocked(a string) []Message {
-	m := b.inbox[a]
-	b.inbox[a] = nil
+	m, err := b.mail.Collect(a)
+	if err != nil {
+		b.fail(err)
+	}
 	return m
+}
+
+// fail records the first carrier failure. Lock held.
+func (b *Bus) fail(err error) {
+	if b.err == nil {
+		b.err = err
+	}
+}
+
+// Err reports the first failure of the carrier. Messages may have been lost
+// after it, so a run with an error has no trustworthy result.
+func (b *Bus) Err() error {
+	b.mu.Lock()
+	defer b.mu.Unlock()
+	return b.err
 }
 
 // Wait blocks until the agent has mail, the timeout passes, or every active
@@ -279,7 +327,7 @@ func (b *Bus) checkQuiet() {
 		return
 	}
 	for a := range b.active {
-		if !b.waiting[a] || len(b.inbox[a]) > 0 {
+		if !b.waiting[a] || b.mail.Holds(a) {
 			return
 		}
 	}

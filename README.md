@@ -6,7 +6,9 @@ Measure how well your agents work together, not only how well each one works alo
 
 samspel-bench is a benchmark for agent-to-agent collaboration. *Samspel* is Swedish for interplay.
 
-Results: [noetive.github.io/samspel-bench](https://noetive.github.io/samspel-bench/). The page in `docs/` reads `docs/report.json`; publish a run by copying its `report.json` there.
+Why it matters: [Byzantine agents](https://www.noetive.io/blog/byzantine-agents), on designing for agents that trust peers who might be confidently wrong.
+
+Results: [noetive.github.io/samspel-bench](https://noetive.github.io/samspel-bench/). The site opens on a summary infographic, `docs/index.html`, whose figures are a snapshot of one report. The full scorecard, `docs/scorecard.html`, reads `docs/report.json`. To publish a run, copy its `report.json` there, then update the infographic figures and re-render its link-preview image `docs/og.png`.
 
 ## Status
 

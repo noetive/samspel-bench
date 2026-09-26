@@ -66,7 +66,9 @@ fi
 # --- binaries and bulk -----------------------------------------------------
 # `make bench` leaves mem.out and `go test -c` leaves a multi-megabyte
 # samspel.test. Both are gitignored and both are one `git add -f` from being
-# permanent. Nothing tracked here is binary, so any binary at all is a mistake.
+# permanent. The one binary tracked here is the results site's link-preview
+# image, so PNGs directly under docs/ pass; the size cap above still holds them.
+# Any other binary is a mistake.
 while IFS= read -r path; do
 	[ -n "$path" ] || continue
 	blob=$(git rev-parse ":$path" 2>/dev/null)
@@ -84,10 +86,12 @@ done <<STAGED
 $staged
 STAGED
 
-binaries=$(git diff --cached --numstat --diff-filter=ACMR |
-	awk '$1 == "-" && $2 == "-" { print $3 }')
+# Renames are listed as a delete plus an add, so the path judged is always the
+# new one, and fields split on tabs so a path with spaces stays whole.
+binaries=$(git -c core.quotePath=false diff --cached --numstat --no-renames --diff-filter=ACMR |
+	awk -F '\t' '$1 == "-" && $2 == "-" && $3 !~ /^docs\/[^\/]*\.png$/ { print $3 }')
 if [ -n "$binaries" ]; then
-	printf 'pre-commit: this repository tracks no binaries, but these are staged:\n%s\n' "$binaries" >&2
+	printf 'pre-commit: only PNGs directly under docs/ may be binary, but these are staged:\n%s\n' "$binaries" >&2
 	fail=1
 fi
 

@@ -3,11 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>samspel-bench: cut the line and two of three tasks fail</title>
-<meta name="description" content="Claude agents that can't talk solve 0% of relay and ledger tasks. Give them a message line and the best team solves 100%.">
+<title>samspel-bench: talking adds 41 points, and sometimes it's the only way</title>
+<meta name="description" content="Talking lifts Claude agent teams from 51% to 92% on pooling, and it's the only way through relay and ledger. Solving a task alone isn't the same as solving it together.">
 <meta property="og:type" content="website">
-<meta property="og:title" content="samspel-bench: cut the line and two of three tasks fail">
-<meta property="og:description" content="Agents that can't talk solve 0% of relay and ledger tasks. With a message line, the best team solves 100%.">
+<meta property="og:title" content="samspel-bench: talking adds 41 points, and sometimes it's the only way">
+<meta property="og:description" content="Talking lifts agent teams from 51% to 92% on pooling and is the only way through relay and ledger. Solving a task alone isn't the same as solving it together.">
 <meta property="og:image" content="https://noetive.github.io/samspel-bench/og.png">
 <meta property="og:image:width" content="1920">
 <meta property="og:image:height" content="1080">
@@ -25,9 +25,12 @@
       | [.[0].family, .[0].model,
          (map(.success.team*.instances)|add) / (map(.instances)|add),
          (map(.success.nocomm*.instances)|add) / (map(.instances)|add),
+         (map(select(.success.oracle!=null))
+           | (map(.success.oracle*.instances)|add) / (map(.instances)|add)),
          (map(.tokens_per_team_run)|add) / length,
          (map(.instances)|add)] | @tsv' report.json
-  Bar length = 280px × team success. Token dots = tokens / 10k, rounded.
+  Bar length = 280px × team success; the ○ sits at 280px × oracle success.
+  Token dots = tokens / 10k, rounded.
   Re-render this page and og.png when a new report.json is published.
 -->
 <style>
@@ -57,18 +60,20 @@ body{font-family:var(--body);color:var(--ink)}
 
 /* header */
 .kicker{left:64px;top:56px}
-h1{left:64px;top:82px;font:900 88px/1 var(--display);letter-spacing:-.025em;white-space:nowrap}
-.stand{left:64px;top:194px;width:1120px;font:400 22px/1.45 var(--body)}
+h1{left:64px;top:80px;font:900 76px/1 var(--display);letter-spacing:-.025em;white-space:nowrap}
+.stand{left:64px;top:248px;width:1500px;font:400 20px/1.3 var(--body)}
 
-/* hero column */
-.hero{left:50px;top:318px;font:900 380px/.82 var(--display);letter-spacing:-.04em}
-.hero-cap{left:64px;top:652px;width:500px;font:700 30px/1.15 var(--display);letter-spacing:-.01em}
-.hero-body{left:64px;top:748px;width:500px;font:400 19px/1.5 var(--body)}
-.cta{left:64px;top:846px;display:inline-block;padding:14px 26px;background:var(--teal-pastel);border:2px solid var(--ink);border-radius:14px;
+/* hero column: one model, alone with everything versus as a team */
+.hero{left:64px;top:318px;width:516px;height:432px}
+.hero .num{font:900 150px/.82 var(--display);letter-spacing:-.04em;left:-6px}
+.hero .lbl{width:200px;font:500 18px/1.3 var(--body)}
+.hero-cap{left:0;top:358px;width:516px;font:700 30px/1.15 var(--display);letter-spacing:-.01em}
+.hero-body{left:64px;top:762px;width:500px;font:400 18px/1.5 var(--body)}
+.cta{left:64px;top:858px;display:inline-block;padding:14px 26px;background:var(--teal-pastel);border:2px solid var(--ink);border-radius:14px;
   font:700 22px/1.2 var(--body);color:var(--ink);text-decoration:none;
   box-shadow:3px 3px 0 var(--purple),-3px -3px 0 var(--teal),3px -3px 0 var(--sky),-3px 3px 0 var(--pink)}
 .cta:hover{transform:translate(1px,1px)}
-.blog{left:64px;top:926px;font:700 18px/1.3 var(--body);color:var(--ink);text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:4px}
+.blog{left:64px;top:936px;font:700 18px/1.3 var(--body);color:var(--ink);text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:4px}
 .blog:focus-visible{outline:3px solid var(--purple);outline-offset:4px}
 .cta:focus-visible{outline:3px solid var(--purple);outline-offset:4px}
 
@@ -84,11 +89,12 @@ h1{left:64px;top:82px;font:900 88px/1 var(--display);letter-spacing:-.025em;whit
 .fam p{font:400 15px/1.4 var(--body)}
 .cut{left:870px;font:800 52px/1 var(--display);letter-spacing:-.02em}
 .model{left:1110px;font:500 16px/22px var(--body)}
-.val{left:1516px;font:700 16px/22px var(--mono)}
+.val{left:1522px;font:700 16px/22px var(--mono)}
 .tok{font:500 14px/22px var(--mono);color:var(--muted)}
-.sticker{left:1128px;top:958px;padding:6px 14px;background:var(--blue);border:2px solid var(--ink);border-radius:999px;
+.oracle-lbl{left:1250px;top:926px;width:224px;text-align:right;font:500 13px/22px var(--body);color:var(--ink)}
+.sticker{left:1330px;top:958px;padding:6px 14px;background:var(--blue);border:2px solid var(--ink);border-radius:999px;
   box-shadow:2px 2px 0 var(--ink);transform:rotate(-1.5deg);font:700 15px/1.3 var(--body);white-space:nowrap}
-footer{left:64px;top:1004px;width:1040px;font:400 13px/1.45 var(--body);color:var(--muted)}
+footer{left:64px;top:1002px;width:1180px;font:400 13px/1.45 var(--body);color:var(--muted)}
 footer a{color:var(--ink);text-underline-offset:2px}
 
 /* build-in: scene first, then lines, agents, data, and the hero last */
@@ -112,8 +118,8 @@ footer a{color:var(--ink);text-underline-offset:2px}
 <main class="canvas" aria-label="samspel-bench results summary">
 
   <p class="abs micro kicker in">samspel-bench · agent-to-agent collaboration · run of 25 Sep 2026</p>
-  <h1 class="abs in" style="animation-delay:.1s">Cut the line and two of three tasks fail.</h1>
-  <p class="abs stand in" style="animation-delay:.2s">samspel-bench gives Claude agents the same tasks twice: once with a message line between them, once without. The gap is what collaboration is worth.</p>
+  <h1 class="abs in" style="animation-delay:.1s">Talking adds 41 points on pooling.<br>On relay and ledger, it's the only way.</h1>
+  <p class="abs stand in" style="animation-delay:.2s">Same Claude agents, same tasks, with and without a message line between them.</p>
 
   <!-- lanes (tint + dividers) -->
   <div class="abs lane sage" style="top:318px"></div>
@@ -121,11 +127,11 @@ footer a{color:var(--ink);text-underline-offset:2px}
   <div class="abs lane teal last" style="top:750px"></div>
 
   <p aria-hidden="true" class="abs micro fade" style="left:870px;top:292px;animation-delay:.3s">Can't talk · solved</p>
-  <p aria-hidden="true" class="abs micro fade" style="left:1110px;top:292px;animation-delay:.3s">Can talk · solved, by model</p>
+  <p aria-hidden="true" class="abs micro fade" style="left:1110px;top:292px;animation-delay:.3s">Can talk · solved as a team</p>
   <p aria-hidden="true" class="abs micro fade" style="left:1600px;top:292px;animation-delay:.3s">Tokens per team run · dot = 10k</p>
 
   <!-- the message lines, agents, cuts, envelopes, bars and token dots -->
-  <svg class="abs" style="left:0;top:0" width="1920" height="1080" viewBox="0 0 1920 1080" role="img" aria-label="Share of task instances solved, without and with a message line. Pooling: can't talk 36 to 70%; talking Opus 5.5 100%, Fable 5.1 100%, Sonnet 5 88%, Haiku 4.5 82%. Relay: can't talk 0%; talking Opus 5.5 100%, Fable 5.1 92%, Sonnet 5 75%, Haiku 4.5 9%. Ledger: can't talk 0%; talking Opus 5.5 96%, Fable 5.1 100%, Sonnet 5 94%, Haiku 4.5 0%. Tokens per team run, Opus 5.5, Fable 5.1, Sonnet 5, Haiku 4.5: pooling 13k, 19k, 22k, 15k; relay 21k, 47k, 65k, 52k; ledger 72k, 83k, 199k, 95k.">
+  <svg class="abs" style="left:0;top:0" width="1920" height="1080" viewBox="0 0 1920 1080" role="img" aria-label="Share of task instances solved. Pooling: can't talk 36 to 70%; as a team Opus 5.5 100%, Fable 5.1 100%, Sonnet 5 88%, Haiku 4.5 82%; one agent given everything 100% for every model. Relay: can't talk 0%; as a team Opus 5.5 100%, Fable 5.1 92%, Sonnet 5 75%, Haiku 4.5 9%; one agent given everything 100%, except Haiku 4.5 at 90%. Ledger: can't talk 0%; as a team Opus 5.5 96%, Fable 5.1 100%, Sonnet 5 94%, Haiku 4.5 0%; one agent given everything 100%, except Haiku 4.5 at 93%. Tokens per team run, Opus 5.5, Fable 5.1, Sonnet 5, Haiku 4.5: pooling 13k, 19k, 22k, 15k; relay 21k, 47k, 65k, 52k; ledger 72k, 83k, 199k, 95k.">
     <defs>
       <g id="env"><rect x="-9" y="-6" width="18" height="12" rx="2" fill="#FFFFFF" stroke="#18181B" stroke-width="2"/><path d="M-9 -6 L0 1 L9 -6" fill="none" stroke="#18181B" stroke-width="2"/></g>
       <g id="scissors" fill="none" stroke="#18181B" stroke-width="2.5" stroke-linecap="round">
@@ -208,6 +214,12 @@ footer a{color:var(--ink);text-underline-offset:2px}
       </g>
     </g>
 
+    <!-- one agent given everything (oracle): cx = 1228 + 280 × oracle success -->
+    <g class="pop" style="animation-delay:3.4s" fill="#FFFFFF" stroke="#18181B" stroke-width="2">
+      <circle cx="1508" cy="421" r="6"/><circle cx="1508" cy="449" r="6"/><circle cx="1508" cy="477" r="6"/><circle cx="1508" cy="505" r="6"/><circle cx="1508" cy="637" r="6"/><circle cx="1508" cy="665" r="6"/><circle cx="1508" cy="693" r="6"/><circle cx="1508" cy="853" r="6"/><circle cx="1508" cy="881" r="6"/><circle cx="1508" cy="909" r="6"/>
+      <!-- Haiku 4.5: relay 89.5%, ledger 93.5% -->
+      <circle cx="1478.6" cy="721" r="6"/><circle cx="1489.7" cy="937" r="6"/>
+    </g>
     <!-- F1 tokens per team run: 13k→1, 19k→2, 22k→2, 15k→2 -->
     <g fill="#18181B" class="fade" style="animation-delay:3.1s">
       <circle cx="1606" cy="421" r="4"/>
@@ -284,22 +296,33 @@ footer a{color:var(--ink);text-underline-offset:2px}
   <p aria-hidden="true" class="abs tok fade" style="left:1664px;top:654px;animation-delay:3.25s">47k</p>
   <p aria-hidden="true" class="abs tok fade" style="left:1675px;top:682px;animation-delay:3.3s">65k</p>
   <p aria-hidden="true" class="abs tok fade" style="left:1664px;top:710px;animation-delay:3.35s">52k</p>
+  <p aria-hidden="true" class="abs oracle-lbl fade" style="animation-delay:3.6s">○ = one agent, given everything →</p>
   <p aria-hidden="true" class="abs tok fade" style="left:1686px;top:842px;animation-delay:3.3s">72k</p>
   <p aria-hidden="true" class="abs tok fade" style="left:1697px;top:870px;animation-delay:3.4s">83k</p>
   <p aria-hidden="true" class="abs tok fade" style="left:1829px;top:898px;animation-delay:3.5s">199k</p>
   <p aria-hidden="true" class="abs tok fade" style="left:1708px;top:926px;animation-delay:3.6s">95k</p>
 
-  <p class="abs sticker fade" style="animation-delay:5.6s">Even talking, Haiku 4.5 almost never solves the ledger.</p>
+  <p class="abs sticker fade" style="animation-delay:5.9s">Sonnet 5 spends the most tokens on every task, and still trails.</p>
 
-  <!-- hero lands last -->
-  <p class="abs hero land" data-hero style="animation-delay:4.5s">0%</p>
-  <p class="abs hero-cap fade" style="animation-delay:5.3s">of relay and ledger tasks solved by agents that can't talk.</p>
-  <p class="abs hero-body fade" style="animation-delay:5.5s">True for all four models. Add a message line and the best team on each task solves 100%.</p>
-  <a class="abs cta fade" href="scorecard.html" style="animation-delay:5.7s">See the full scorecard →</a>
-  <a class="abs blog fade" href="https://www.noetive.io/blog/byzantine-agents" style="animation-delay:5.75s">Why it matters: Byzantine agents →</a>
+  <!-- hero lands last: the same model, alone with everything, then as a team -->
+  <div class="abs hero" data-hero>
+    <p class="abs micro fade" style="left:0;top:0;animation-delay:4.3s">Haiku 4.5 · ledger</p>
+    <p class="abs num fade" style="top:28px;animation-delay:4.4s">93%</p>
+    <p class="abs lbl fade" style="left:282px;top:62px;animation-delay:4.4s">one agent, given everything</p>
+    <svg class="abs fade" style="left:52px;top:160px;animation-delay:4.8s" width="24" height="44" viewBox="0 0 24 44" aria-hidden="true">
+      <path d="M12 2 V38 M4 30 L12 40 L20 30" fill="none" stroke="#18181B" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <p class="abs micro fade" style="left:92px;top:174px;animation-delay:4.8s">Same task, work split across a team</p>
+    <p class="abs num land" style="top:212px;animation-delay:5.0s">0%</p>
+    <p class="abs lbl fade" style="left:214px;top:258px;animation-delay:5.0s">as a team that talks</p>
+    <p class="abs hero-cap fade" style="animation-delay:5.6s">Knowing the task isn't the same as solving it together.</p>
+  </div>
+  <p class="abs hero-body fade" style="animation-delay:5.8s">Opus 5.5 and Fable 5.1 lose at most 8 points when the work is split. Sonnet 5 loses up to 25. What makes a model a good teammate?</p>
+  <a class="abs cta fade" href="scorecard.html" style="animation-delay:6.0s">See the full scorecard →</a>
+  <a class="abs blog fade" href="https://www.noetive.io/blog/byzantine-agents" style="animation-delay:6.05s">Why it matters: Byzantine agents →</a>
 
-  <footer class="abs fade" style="animation-delay:5.8s">
-    Source: <a href="report.json">report.json</a>, run of 25 Sep 2026. Share of task instances solved, pooled over six conditions per model and task (46 to 73 task instances each). The peers-8 cells, one instance each, are left out. Token dots rounded to the nearest 10k.
+  <footer class="abs fade" style="animation-delay:6.1s">
+    Source: <a href="report.json">report.json</a>, run of 25 Sep 2026. Share of task instances solved, pooled over six conditions per model and task (46 to 73 task instances each). The peers-8 cells, one instance each, are left out. Pooling across all four models: 51% without talking, 92% with. ○ marks one agent given everything the team holds between them. Token dots rounded to the nearest 10k.
     An open benchmark by <a href="https://noetive.io">Noetive</a> · <a href="https://github.com/noetive/samspel-bench">github.com/noetive/samspel-bench</a>
   </footer>
 </main>

@@ -12,8 +12,9 @@
 :root{--bg:#FDFBF7;--surface:#FFFFFF;--ink:#18181B;--muted:#6B7280;--grid:#E2E8E4;--sage:#E2E8E4;--blue:#DBEAFE;--teal:#CCFBF1;--purple:#A855F7;--shadow:#18181B;color-scheme:light}
 @media (prefers-color-scheme:dark){:root{--bg:#0F172A;--surface:#1E293B;--ink:#F8FAFC;--muted:#94A3B8;--grid:#334155;--sage:#334155;--blue:#1E3A5F;--teal:#134E4A;--shadow:#000000;color-scheme:dark}}
 *{box-sizing:border-box}
-/* The page is a dashboard: it fills the viewport and never scrolls. Charts
-   redraw to whatever space is left. */
+/* On wide screens the page is a dashboard: it fills the viewport and never
+   scrolls, and charts redraw to whatever space is left. Narrow screens scroll
+   instead, with each chart at a fixed readable height. */
 html,body{height:100%;overflow:hidden}
 body{margin:0;background:var(--bg);color:var(--ink);font:400 14px/1.45 "Space Grotesk",ui-sans-serif,system-ui,sans-serif;
   display:grid;grid-template-rows:auto auto minmax(0,1fr) auto;gap:10px;padding:14px 20px 10px;height:100dvh}
@@ -57,7 +58,7 @@ footer{display:flex;justify-content:space-between;gap:4px 16px;flex-wrap:wrap}
 /* Short screens drop the prose first; the charts keep the space. */
 @media (max-height:760px){header .sub,figcaption,footer .note{display:none}.tile dl{grid-template-columns:repeat(4,auto)}}
 @media (max-height:560px){.tile dl{display:none}.tile .big{font-size:22px}}
-@media (max-width:1000px){main{grid-template-columns:1fr;grid-template-rows:repeat(3,minmax(0,1fr));gap:34px}figcaption,header .sub,.tile dl,footer .note{display:none}.tiles{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}}
+@media (max-width:1000px){html,body{height:auto;overflow:visible}body{height:auto;min-height:100dvh}main{grid-template-columns:1fr;grid-template-rows:none;grid-auto-rows:440px;gap:44px}.tile dl{display:none}.tiles{grid-template-columns:repeat(auto-fit,minmax(150px,1fr));row-gap:40px}}
 .ssv text{fill:var(--ink);font-size:11.5px}
 .ssv .mu{fill:var(--muted)}
 .ssv .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:10px;letter-spacing:.05em}

@@ -3,8 +3,8 @@ module github.com/noetive/samspel-bench
 go 1.25.13
 
 require (
-	github.com/goccy/go-json v0.10.6
-	github.com/tidwall/gjson v1.19.0
+	github.com/goccy/go-json v0.11.2
+	github.com/tidwall/gjson v1.20.0
 )
 
 require (
